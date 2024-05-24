@@ -59,9 +59,11 @@ int main(void){
   float wpm;
   int count_for_closing_window_after_wpm=0;
 
+  //initializers the raylib window and sets the targetfps to 200
   InitWindow(init_width,init_height,"TypeOnMe");
   SetTargetFPS(200);
   
+  //a list of words to use {not the datatype}
   vector<string> dictionary = {
   "very",
   "cool",
@@ -76,21 +78,26 @@ int main(void){
   "hello"
   };
 
-int start_time = GetTime();
+  int start_time;
   while(!WindowShouldClose())
     {
+      
+if(letter_count==1){
+  start_time = GetTime();
+} //Only starts the timer when the first character is pressed.
 
-      //if(spaces==1){
-    
+if(spaces==10){
+      
 
       //average nikalna sakxas,sab wpm ko sum garera,store all the wpms in a vector
       //and push_back to push to the very vector and finally final wpm vanera dekhauna sakiyo,damnn
         const int end_time = GetTime();
         wpm = (float)10/(end_time-start_time) * 60 ;    
-        DrawText(to_string(wpm).c_str(),30,init_height/2 + 100,30,BLACK);  
-        //   count_for_closing_window_after_wpm++;
+        DrawText(to_string(wpm).c_str(),30,init_height/2 + 100,30,BLACK);  //c_str() method is used for string objects to convert into c-type strings,
+                                                                           
+       count_for_closing_window_after_wpm++;
       
-      //}
+  }
       
       if((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)){
         if(name[letter_count] == ' '){
@@ -102,10 +109,11 @@ int start_time = GetTime();
 
       else if(letter_count < MAX_INPUT_CHAR){
         int key = GetCharPressed();
-        
+      
       if((key >= 32 && key<= 125) || key== ' ' ){
-  name[letter_count] = (char) key;
-        if(name[letter_count] == ' '){
+         name[letter_count] = (char) key; //type caster to a character as key is a character pointer returned by GetCharPressed
+        
+         if(name[letter_count] == ' '){
           spaces++;
         }
           std::cout << name <<std::endl;
@@ -128,17 +136,20 @@ int start_time = GetTime();
       ClearBackground(RAYWHITE);
       DrawText(name,30,init_height/2-10,30,BLACK);
  
-      Cursor cursor_1(name,init_height,letter_count,drawCursor); //used OOP to implement a blinking cursor
-  
-      WordGenerator random_word_gen;
+      //Blinking Cursor Next to Text.
+      Cursor cursor_1(name,init_height,letter_count,drawCursor); 
 
+  
+
+      WordGenerator random_word_gen;
       int word_width=0;
       vector<string> random_words = random_word_gen.RandomWord(dictionary,2);
       for(string random_word : random_words ){ 
         DrawText(random_word.c_str(),2.5*word_width+50,30,30,BLACK);
         word_width+=MeasureText(random_word.c_str(),20);
       
-      }  
+      }
+        //Random Text Being Rendered
       
       EndDrawing();
 
