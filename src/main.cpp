@@ -150,6 +150,7 @@ if(spaces==5){
   
 
       WordGenerator random_word_gen;
+
       int word_width=0;
       vector<string> random_words = random_word_gen.RandomWord(dictionary,3,5);
       for(string random_word : random_words ){ 
