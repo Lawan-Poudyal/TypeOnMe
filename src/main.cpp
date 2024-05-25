@@ -4,7 +4,7 @@
 #include<vector>
 #include<ctime>
 #include<unistd.h>
-
+#include<numeric>
 
 #define MAX_INPUT_CHAR 500
 
@@ -30,12 +30,12 @@ class Cursor{
 class WordGenerator{
 
     public:
-    vector<string> RandomWord(vector<string>dictionary,int seed){
+    vector<string> RandomWord(vector<string>dictionary,int seed,int n){
 
   srand(seed);
   vector<string> return_list;
   
-  for(int i=0;i<10;i++){
+  for(int i=0;i<n;i++){
     return_list.push_back(dictionary[rand()%10]);
   }
   return return_list;   
@@ -75,8 +75,15 @@ int main(void){
   "signify",
   "netlify",
   "hey",
-  "hello"
+  "hello",
+  "rather",
+  "punctual",
+  "philosophical",
+  "romantic",
+  "exquisite"
   };
+
+  vector<int> wpm_list_vector;  
 
   int start_time;
   while(!WindowShouldClose())
@@ -86,17 +93,18 @@ if(letter_count==1){
   start_time = GetTime();
 } //Only starts the timer when the first character is pressed.
 
-if(spaces==10){
-      
+
+if(spaces==5){     
 
       //average nikalna sakxas,sab wpm ko sum garera,store all the wpms in a vector
       //and push_back to push to the very vector and finally final wpm vanera dekhauna sakiyo,damnn
         const int end_time = GetTime();
         wpm = (float)10/(end_time-start_time) * 60 ;    
-        DrawText(to_string(wpm).c_str(),30,init_height/2 + 100,30,BLACK);  //c_str() method is used for string objects to convert into c-type strings,
-                                                                           
-       count_for_closing_window_after_wpm++;
-      
+        wpm_list_vector.push_back(wpm);
+        
+      int avg_wpm = accumulate(wpm_list_vector.begin(),wpm_list_vector.end(),0) / wpm_list_vector.size(); 
+      DrawText(to_string(avg_wpm).c_str(),30,init_height/2 + 100,30,BLACK);  //c_str() method is used for string objects to convert into c-type strings,
+      count_for_closing_window_after_wpm++;
   }
       
       if((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)){
@@ -143,7 +151,7 @@ if(spaces==10){
 
       WordGenerator random_word_gen;
       int word_width=0;
-      vector<string> random_words = random_word_gen.RandomWord(dictionary,2);
+      vector<string> random_words = random_word_gen.RandomWord(dictionary,3,5);
       for(string random_word : random_words ){ 
         DrawText(random_word.c_str(),2.5*word_width+50,30,30,BLACK);
         word_width+=MeasureText(random_word.c_str(),20);
