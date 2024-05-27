@@ -8,6 +8,9 @@
 
 #define MAX_INPUT_CHAR 500
 
+int global_seed = time(NULL);
+
+
 using namespace std;
 vector<string> RandomWord(vector<string>,int seed);
 
@@ -152,10 +155,10 @@ if(spaces==5){
       WordGenerator random_word_gen;
 
       int word_width=0;
-      vector<string> random_words = random_word_gen.RandomWord(dictionary,3,5);
+      vector<string> random_words = random_word_gen.RandomWord(dictionary,-1,5);
       for(string random_word : random_words ){ 
-        DrawText(random_word.c_str(),2.5*word_width+50,30,30,BLACK);
-        word_width+=MeasureText(random_word.c_str(),20);
+        DrawText(random_word.c_str(),2.5*word_width+10,30,30,BLACK);
+        word_width+=MeasureText(random_word.c_str(),50);
       
       }
         //Random Text Being Rendered
