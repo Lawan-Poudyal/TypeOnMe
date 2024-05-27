@@ -8,11 +8,15 @@
 
 #define MAX_INPUT_CHAR 500
 
-int global_seed = time(NULL);
-
 
 using namespace std;
 vector<string> RandomWord(vector<string>,int seed);
+const int init_width  = 1440;
+const int init_height = 768;
+void clearWindow();
+int global_seed = time(NULL);
+int in_positionY=init_height/2-10;
+int in_positionX =init_width/2;
 
 class Cursor{
   
@@ -22,9 +26,10 @@ class Cursor{
     int pos1_y;
     int pos2_y;
    
-    Cursor(char* name,int init_height_name,int letter_count,bool drawCursor){
+    Cursor(char* name,int letter_count,bool drawCursor){
       if(drawCursor && letter_count < MAX_INPUT_CHAR){
-          DrawLine(MeasureText(name,30)+35,init_height_name/2 - 25,MeasureText(name,30)+35,init_height_name/2+25,BLACK);
+          DrawLine(MeasureText(name,30)+in_positionX+10,in_positionY - 25,in_positionX+MeasureText(name,30)+10,in_positionY+25,RAYWHITE);
+// Auto positions the cursor/carat to the by displacing it by a hardcoded amount
       }
    }
 
@@ -42,6 +47,7 @@ class WordGenerator{
     return_list.push_back(dictionary[rand()%10]);
   }
   return return_list;   
+
   }
 
 };
@@ -49,8 +55,6 @@ class WordGenerator{
 
 int main(void){  
   
-  const int init_width  = 1440;
-  const int init_height = 768;
 
   char name[MAX_INPUT_CHAR + 1];
   name[MAX_INPUT_CHAR+1] = '\0';
@@ -83,8 +87,14 @@ int main(void){
   "punctual",
   "philosophical",
   "romantic",
-  "exquisite"
-  };
+  "exquisite",
+  "random",
+  "slash",
+  "govern",
+  "mesh",
+  "jeopardy",
+  "utopia",
+  "rant"};
 
   vector<int> wpm_list_vector;  
 
@@ -94,6 +104,7 @@ int main(void){
       
 if(letter_count==1){
   start_time = GetTime();
+  
 } //Only starts the timer when the first character is pressed.
 
 
@@ -106,7 +117,7 @@ if(spaces==5){
         wpm_list_vector.push_back(wpm);
         
       int avg_wpm = accumulate(wpm_list_vector.begin(),wpm_list_vector.end(),0) / wpm_list_vector.size(); 
-      DrawText(to_string(avg_wpm).c_str(),30,init_height/2 + 100,30,BLACK);  //c_str() method is used for string objects to convert into c-type strings,
+      DrawText(to_string(avg_wpm).c_str(),init_width/2,init_height/2 + 100,30,RAYWHITE);  //c_str() method is used for string objects to convert into c-type strings,
       count_for_closing_window_after_wpm++;
   }
       
@@ -129,6 +140,7 @@ if(spaces==5){
         }
           std::cout << name <<std::endl;
           letter_count++;
+          in_positionX-=10;
       }
 
       }
@@ -142,22 +154,19 @@ if(spaces==5){
 
         //To-be replenished with OOP
 
-      BeginDrawing();
-      
-      ClearBackground(RAYWHITE);
-      DrawText(name,30,init_height/2-10,30,BLACK);
+      DrawText(name,in_positionX,in_positionY,30,RAYWHITE);
  
       //Blinking Cursor Next to Text.
-      Cursor cursor_1(name,init_height,letter_count,drawCursor); 
+      Cursor cursor_1(name,letter_count,drawCursor); 
 
-  
+      clearWindow(); 
 
       WordGenerator random_word_gen;
 
       int word_width=0;
-      vector<string> random_words = random_word_gen.RandomWord(dictionary,-1,5);
+      vector<string> random_words = random_word_gen.RandomWord(dictionary,global_seed,5);
       for(string random_word : random_words ){ 
-        DrawText(random_word.c_str(),2.5*word_width+10,30,30,BLACK);
+        DrawText(random_word.c_str(),2.5*word_width+10,30,30,RAYWHITE);
         word_width+=MeasureText(random_word.c_str(),50);
       
       }
@@ -176,3 +185,8 @@ if(spaces==5){
   return 0;
 }
 
+void clearWindow(){
+      BeginDrawing();      
+      ClearBackground(BLACK);
+
+}
