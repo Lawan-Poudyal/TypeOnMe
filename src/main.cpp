@@ -1,3 +1,4 @@
+#include<cstring>
 #include<raylib.h>
 #include<iostream>
 #include<string>
@@ -39,15 +40,14 @@ class WordGenerator{
 
     public:
     vector<string> RandomWord(vector<string>dictionary,int seed,int n){
-
-  srand(seed);
-  vector<string> return_list;
+    srand(seed);
+    vector<string> return_list;
   
-  for(int i=0;i<n;i++){
+    for(int i=0;i<n;i++){
     return_list.push_back(dictionary[rand()%10]);
-  }
-  return return_list;   
+    }
 
+  return return_list;   
   }
 
 };
@@ -56,13 +56,13 @@ class WordGenerator{
 int main(void){  
   
 
-  char name[MAX_INPUT_CHAR + 1];
+  char* name = (char *) malloc( sizeof(char)*MAX_INPUT_CHAR + 1);
   name[MAX_INPUT_CHAR+1] = '\0';
   int letter_count = 0;
   float cursorContent = 0.0f;
   bool drawCursor = true;
 
-  int spaces =0;
+  int spaces=0;
   float wpm;
   int count_for_closing_window_after_wpm=0;
 
@@ -94,7 +94,8 @@ int main(void){
   "mesh",
   "jeopardy",
   "utopia",
-  "rant"};
+  "rant"
+  };
 
   vector<int> wpm_list_vector;  
 
@@ -103,24 +104,24 @@ int main(void){
     {
       
 if(letter_count==1){
-  start_time = GetTime();
-  
+    start_time = GetTime();
 } //Only starts the timer when the first character is pressed.
 
 
-if(spaces==5){     
+if(spaces==3){     
 
       //average nikalna sakxas,sab wpm ko sum garera,store all the wpms in a vector
       //and push_back to push to the very vector and finally final wpm vanera dekhauna sakiyo,damnn
-        const int end_time = GetTime();
-        wpm = (float)10/(end_time-start_time) * 60 ;    
+        const float end_time = GetTime();
+        wpm = (float)3/(end_time-start_time) * 60 ;    
         wpm_list_vector.push_back(wpm);
         
-      int avg_wpm = accumulate(wpm_list_vector.begin(),wpm_list_vector.end(),0) / wpm_list_vector.size(); 
-      DrawText(to_string(avg_wpm).c_str(),init_width/2,init_height/2 + 100,30,RAYWHITE);  //c_str() method is used for string objects to convert into c-type strings,
-      count_for_closing_window_after_wpm++;
-  }
-      
+        int avg_wpm = accumulate(wpm_list_vector.begin(),wpm_list_vector.end(),0) / wpm_list_vector.size(); 
+        DrawText(to_string(avg_wpm).c_str(),init_width/2,init_height/2 + 100,30,RAYWHITE);  //c_str() method is used for string objects to convert into c-type strings,
+        count_for_closing_window_after_wpm++;
+        cout << end_time;
+}
+      cout << start_time;
       if((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)){
         if(name[letter_count] == ' '){
           spaces--;
@@ -133,15 +134,23 @@ if(spaces==5){
         int key = GetCharPressed();
       
       if((key >= 32 && key<= 125) || key== ' ' ){
-         name[letter_count] = (char) key; //type caster to a character as key is a character pointer returned by GetCharPressed
-        
-         if(name[letter_count] == ' '){
-          spaces++;
-        }
-          std::cout << name <<std::endl;
+
+        name[letter_count] = (char) key; //type caster to a character as key is a character pointer returned by GetCharPressed
+         
+        if(key==' ' ||name[letter_count] == ' '){
+           
+           spaces++;
+            memset(name, 0, sizeof(char) * MAX_INPUT_CHAR + 1);
+           letter_count=0;
+          
+         }
+         else{
+          std::cout << *name <<std::endl;
           letter_count++;
           in_positionX-=10;
-      }
+        }
+      
+    }
 
       }
 
@@ -153,25 +162,25 @@ if(spaces==5){
          
 
         //To-be replenished with OOP
-
       DrawText(name,in_positionX,in_positionY,30,RAYWHITE);
- 
       //Blinking Cursor Next to Text.
       Cursor cursor_1(name,letter_count,drawCursor); 
-
-      clearWindow(); 
-
+      Cursor cursor_2(name,letter_count,drawCursor); 
+      
       WordGenerator random_word_gen;
 
       int word_width=0;
-      vector<string> random_words = random_word_gen.RandomWord(dictionary,global_seed,5);
+      vector<string> random_words = random_word_gen.RandomWord(dictionary,global_seed,3);
+      
       for(string random_word : random_words ){ 
+
         DrawText(random_word.c_str(),2.5*word_width+10,30,30,RAYWHITE);
         word_width+=MeasureText(random_word.c_str(),50);
       
       }
         //Random Text Being Rendered
-      
+    
+  ClearBackground(BLACK);
       EndDrawing();
 
      if(count_for_closing_window_after_wpm){
@@ -183,10 +192,4 @@ if(spaces==5){
   
   CloseWindow();
   return 0;
-}
-
-void clearWindow(){
-      BeginDrawing();      
-      ClearBackground(BLACK);
-
 }
