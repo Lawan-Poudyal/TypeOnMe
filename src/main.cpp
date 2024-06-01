@@ -1,15 +1,6 @@
-#include<cstring>
-#include<raylib.h>
-#include<iostream>
-#include<string>
-#include<vector>
-#include<ctime>
-#include<unistd.h>
-#include<numeric>
-
-#define MAX_INPUT_CHAR 500
-
-
+#include "dependencies.h"
+#include"wpm.hpp"
+#include"accuracy.hpp"
 using namespace std;
 vector<string> RandomWord(vector<string>,int seed);
 const int init_width  = 1440;
@@ -109,17 +100,10 @@ if(letter_count==1){
 
 
 if(spaces==3){     
-
-      //average nikalna sakxas,sab wpm ko sum garera,store all the wpms in a vector
-      //and push_back to push to the very vector and finally final wpm vanera dekhauna sakiyo,damnn
-        const float end_time = GetTime();
-        wpm = (float)3/(end_time-start_time) * 60 ;    
-        wpm_list_vector.push_back(wpm);
-        
-        int avg_wpm = accumulate(wpm_list_vector.begin(),wpm_list_vector.end(),0) / wpm_list_vector.size(); 
-        DrawText(to_string(avg_wpm).c_str(),init_width/2,init_height/2 + 100,30,RAYWHITE);  //c_str() method is used for string objects to convert into c-type strings,
+  
         count_for_closing_window_after_wpm++;
-        cout << end_time;
+
+        DrawText(to_string(calculate_wpm()).c_str(),init_width/2,init_height/2 + 100,30,RAYWHITE);  //c_str() method is used for string objects to convert into c-type strings,
 }
       cout << start_time;
       if((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)){
