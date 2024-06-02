@@ -1,6 +1,8 @@
 #include "dependencies.h"
 #include"wpm.hpp"
 #include"accuracy.hpp"
+
+//Declarations and definition of global variables
 using namespace std;
 vector<string> RandomWord(vector<string>,int seed);
 const int init_width  = 1440;
@@ -10,6 +12,10 @@ int global_seed = time(NULL);
 int in_positionY=init_height/2-10;
 int in_positionX =init_width/2;
 
+//Declarations ends here
+
+
+//Class definiitions
 class Cursor{
   
   public:
@@ -31,7 +37,8 @@ class WordGenerator{
 
     public:
     vector<string> RandomWord(vector<string>dictionary,int seed,int n){
-    srand(seed);
+    
+    srand(seed); //srand supplies the seed for rand() and call of rand() followed by srand corresponds to the seeded random_number being generated.
     vector<string> return_list;
   
     for(int i=0;i<n;i++){
@@ -42,20 +49,27 @@ class WordGenerator{
   }
 
 };
+//Class definitions ends here
+
 
 
 int main(void){  
   
 
-  char* name = (char *) malloc( sizeof(char)*MAX_INPUT_CHAR + 1);
-  name[MAX_INPUT_CHAR+1] = '\0';
-  int letter_count = 0;
-  float cursorContent = 0.0f;
-  bool drawCursor = true;
-
   int spaces=0;
   float wpm;
   int count_for_closing_window_after_wpm=0;
+  char* name = (char *) malloc( sizeof(char)*MAX_INPUT_CHAR + 1);
+  name[MAX_INPUT_CHAR+1] = '\0';
+  int letter_count = 0;
+  
+  float cursorContent = 0.0f;
+  bool drawCursor = true;
+
+
+  bool truth_value = true;
+  float start_time;
+  
 
   //initializers the raylib window and sets the targetfps to 200
   InitWindow(init_width,init_height,"TypeOnMe");
@@ -71,7 +85,7 @@ int main(void){
   "democrat",
   "nation",
   "signify",
-  "netlify",
+  "hello",
   "hey",
   "hello",
   "rather",
@@ -88,25 +102,23 @@ int main(void){
   "rant"
   };
 
-  vector<int> wpm_list_vector;  
 
-  int start_time;
   while(!WindowShouldClose())
     {
-      
-if(letter_count==1){
-    start_time = GetTime();
-} //Only starts the timer when the first character is pressed.
-
+     
+      if(letter_count==1){
+        start_time = start_timer(truth_value);
+        truth_value=false;
+      }
 
 if(spaces==3){     
   
         count_for_closing_window_after_wpm++;
 
-        DrawText(to_string(calculate_wpm()).c_str(),init_width/2,init_height/2 + 100,30,RAYWHITE);  //c_str() method is used for string objects to convert into c-type strings,
+        DrawText(to_string(calculate_wpm(start_time)).c_str(),init_width/2,init_height/2 + 100,30,RAYWHITE);  //c_str() method is used for string objects to convert into c-type strings,
 }
-      cout << start_time;
-      if((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)){
+  
+    if((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)){
         if(name[letter_count] == ' '){
           spaces--;
         }
@@ -129,7 +141,7 @@ if(spaces==3){
           
          }
          else{
-          std::cout << *name <<std::endl;
+          std::cout << name <<std::endl;
           letter_count++;
           in_positionX-=10;
         }
