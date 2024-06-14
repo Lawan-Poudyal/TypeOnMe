@@ -1,12 +1,12 @@
 #include "dependencies.h"
+float accuracy(vector<string> typedWords,vector<string> totWords){ 
+  int incorWordCount=0;   
+  for(int i=0;i<typedWords.size();i++){
+    if(strcmp(typedWords[i].c_str(),totWords[i].c_str()) !=0){ 
+           incorWordCount+=1;       
+            cout << typedWords[i] <<"||"<< totWords[i]<<"||" <<endl;
+    }
+  }
+  return (float)(typedWords.size() - incorWordCount )/ totWords.size() * 100;
 
-int accuracy(vector<string> typedWords,vector<string> totWords){ 
-     for(string i:totWords){
-       for(string j:typedWords){
-         if(strcmp(i.c_str(),j.c_str())){
-           
-
-          }
-       }
-     }
 }
