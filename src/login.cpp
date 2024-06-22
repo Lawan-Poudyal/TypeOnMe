@@ -3,9 +3,9 @@
 
 #define MAX_INPUT_CHAR 50
 
-typedef enum{
+typedef enum {
     LOGIN,
-    GAMEMODE;
+    GAMEMODE,
 } gameState;
 
 bool IsButtonClicked (Rectangle button ){
@@ -27,7 +27,7 @@ int main() {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
-    gameState = LOGIN;
+    //gameState = LOGIN;
 
 
     InitWindow(screenWidth , screenHeight, "TypeOnMe");
@@ -74,12 +74,12 @@ int main() {
 
         if(IsButtonClicked(loginButton)){
             TraceLog(LOG_INFO, "Login button clicke. \n Username: %s \n Password: %s", username, password);
-            gameState = GAMEMODE;
+           // gameState = GAMEMODE;
         }
 
         if(IsButtonClicked(guestButton)){
             TraceLog(LOG_INFO, "Signed as Guest.");
-            gameState = GAMEMODE;
+           // gameState = GAMEMODE;
         }
 
         BeginDrawing();
