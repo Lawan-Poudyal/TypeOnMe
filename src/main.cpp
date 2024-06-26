@@ -194,9 +194,9 @@ if(spaces==4){
        break;
      } 
      //To-be worked on with OOP
-    }  
-  free(gray_word);
+    }
   free(word);
+  free(gray_word);
   CloseWindow();
   return 0;
 }
