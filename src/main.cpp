@@ -1,7 +1,7 @@
 #include "dependencies.h"
 #include"wpm.hpp"
 #include"accuracy.hpp"
-
+#include"./database_handler.hpp"
 //Declarations and definition of global variables
 using namespace std;
 vector<string> RandomWord(vector<string>,int seed);
@@ -116,6 +116,7 @@ int main(void){
         truth_value = !truth_value;
         }
       }
+
 if(spaces==4){     
   
         count_for_closing_window_after_wpm++;
@@ -150,7 +151,7 @@ if(spaces==4){
           cout << word <<endl;
           letter_count++;
           gtotal_letter_count++;
-          in_positionX-=10;
+          in_positionX-=0;
         }
       
     }
