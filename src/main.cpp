@@ -1,7 +1,7 @@
 #include "dependencies.h"
 #include"wpm.hpp"
 #include"accuracy.hpp"
-#include"./database_handler.hpp"
+#include"database_handler.hpp"
 //Declarations and definition of global variables
 using namespace std;
 vector<string> RandomWord(vector<string>,int seed);
