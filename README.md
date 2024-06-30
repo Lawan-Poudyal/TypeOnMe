@@ -2,12 +2,40 @@
 
 ## Build-On-Linux
 
-### To build this program on linux:
+### Build this program:
 
-First of all install raylib:
+- Install raylib:
+#### On linux:
 
-[raylib installation](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux)
+    [raylib installation](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux)
+
+
+#### On windows:
+        
+    [raylib installation](https://github.com/raysan5/raylib/wiki/Working-on-Windows)
+
+
+- Install sqlite3:
+
+#### On linux:
+
+- On debian based distros:
+
+        sudo apt install sqlite3
+- On arch:
+
+        sudo pacman install sqlite3
+- On fedora
+
+        sudo rpm install sqlite3
+
+#### On windows:
+
+
 
 To compile:
 
-    g++ -lraylib main.cpp
+1. Go the the root directory of the project
+2. Enter in terminal:
+
+        make
