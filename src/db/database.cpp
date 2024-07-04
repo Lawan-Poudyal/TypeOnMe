@@ -52,6 +52,21 @@ int Database::query_data(
       fprintf(stdout,"Table database query successful");
     }
   }
+   else{
+
+    char *zErrMsg = 0;
+          int rc;
+      char* sql ="SELECT * from CREDENTIALS";
+      rc = sqlite3_exec(m_db,sql,db_callback,0,&zErrMsg);
+      if(rc!= SQLITE_OK){
+        fprintf(stdout,"SQLITE Error:%s\n",zErrMsg);
+      }
+      else{
+        fprintf(stdout,"Table database query successful");
+      }
+
+
+     }
      return 0; 
    }
 bool Database::AddEntry( const std::string& username, const std::string& password) {
@@ -76,6 +91,8 @@ bool Database::AddEntry( const std::string& username, const std::string& passwor
       std::cerr << "Error inserting data: " << sqlite3_errmsg(m_db) << std::endl;
       return false;
     }
+
+
 
     return true;
   }

@@ -27,7 +27,7 @@ TARGET = TypeOnMe
 			$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 # Link object files into executable
 $(TARGET): $(OBJECT_FILES)
-				$(CXX) $(CXXFLAGS) $(OBJECT_FILES) -L$(RAYLIB_DIR)/lib -L$(SQLITE3_DIR)/lib -l$(RAYLIB_LIB) -l$(SQLITE3_LIB) -o $(TARGET)
+				$(CXX) $(CXXFLAGS) $(OBJECT_FILES) -L$(RAYLIB_DIR)/lib -L$(SQLITE3_DIR)/lib -l$(RAYLIB_LIB) -l$(SQLITE3_LIB) -o build/$(TARGET)
 
 # Clean rule to remove object files and executable
 clean:
