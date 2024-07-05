@@ -24,7 +24,7 @@ int main(){
 
         }
 
-        else if (currentState == GAMEMODE) {
+        else if (currentState == CHOOSEMODE) {
         }
     
        
