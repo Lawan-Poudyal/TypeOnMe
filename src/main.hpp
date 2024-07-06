@@ -1,6 +1,16 @@
-#include "dependencies.h"
-#include "wpm.hpp"
-#include "accuracy.hpp"
+#pragma once
+#include<chrono>
+#include<cstring>
+#include<raylib.h>
+#include<iostream>
+#include<string>
+#include<vector>
+#include<ctime>
+#include<unistd.h>
+#include<numeric>
+#define MAX_INPUT_CHAR 500
+
+
 
 // Declarations and definition of global variables
 using namespace std;

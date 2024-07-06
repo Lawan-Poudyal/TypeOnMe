@@ -1,4 +1,4 @@
-#pragma once
+
 #include <raylib.h>
 #include <string.h>
 #include "db/database.hpp"

@@ -1,4 +1,9 @@
-#include"./dependencies.h"
+#pragma once
+#include "./main.hpp"
+#include "./wpm.hpp"
+#include "./accuracy.hpp"
+
+
 int start_instance_cgamemode(){
 
     int spaces = 0;
@@ -112,5 +117,6 @@ int start_instance_cgamemode(){
         }
     free(word);  // Only free `word`
     CloseWindow();
+    return 1;
     }
 

@@ -1,4 +1,5 @@
-#include"dependencies.h"
+#pragma once
+#include"main.hpp"
 using namespace std;
 
 time_t start_timer(){
