@@ -30,8 +30,8 @@ void DrawGamePage(gameState currentState){
         DrawText("Competitive ", competitiveMode.x + 15, competitiveMode.y + 13, 20 , BLACK);
         DrawRectangleRoundedLines(competitiveMode, 1, 6, BLACK);
 
-        // Rectangle key = { GetScreenWidth() / 2 + 100 , GetScreenHeight() / 2 + 50 , 50, 49 };
-        // DrawRectangleRounded(key, 0.3, 1, LIGHTGRAY);
+            // Rectangle key = { GetScreenWidth() / 2 + 100 , GetScreenHeight() / 2 + 50 , 50, 49 };
+            // DrawRectangleRounded(key, 0.3, 1, LIGHTGRAY);
 
         if(IsButtonClicked(learnMode)){
             currentState = LEARNMODE;

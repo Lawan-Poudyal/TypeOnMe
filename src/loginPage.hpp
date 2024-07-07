@@ -102,5 +102,7 @@ void DrawLoginPage (gameState currentState) {
             DrawRectangleRoundedLines(guestButton, 1, 6 , BLACK);
         EndDrawing();
     }
+    
+
 
 }  
