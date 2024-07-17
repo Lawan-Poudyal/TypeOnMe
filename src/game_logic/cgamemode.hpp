@@ -1,5 +1,5 @@
 #pragma once
-#include "./main.hpp"
+#include "../main.hpp"
 #include "./wpm.hpp"
 #include "./accuracy.hpp"
 
@@ -8,8 +8,8 @@ int start_instance_cgamemode(){
 
     int spaces = 0;
     float wpm;
-    char* word = (char*) malloc(sizeof(char) * MAX_INPUT_CHAR + 1);
-    word[MAX_INPUT_CHAR] = '\0';
+    char* word = (char*) malloc(sizeof(char) * M_MAX_INPUT_CHARS + 1);
+    word[M_MAX_INPUT_CHARS] = '\0';
     string gray_word;
     int letter_count = 0;
     float cursorContent = 0.0f;
@@ -58,7 +58,7 @@ int start_instance_cgamemode(){
             gtotal_letter_count--;
             letter_count--;
             word[letter_count] = '\0';
-        } else if (letter_count < MAX_INPUT_CHAR) {
+        } else if (letter_count < M_MAX_INPUT_CHARS) {
             int key = GetCharPressed();
 
             if ((key >= 32 && key <= 125) || key == ' ') {
@@ -68,7 +68,7 @@ int start_instance_cgamemode(){
                     spaces++;
                     word[letter_count] = '\0';
                     typedWords.push_back(word);
-                    memset(word, 0, sizeof(char) * MAX_INPUT_CHAR + 1);
+                    memset(word, 0, sizeof(char) * M_MAX_INPUT_CHARS + 1);
                     letter_count = 0;
                 } else {
                     cout << word << endl;

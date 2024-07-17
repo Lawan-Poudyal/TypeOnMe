@@ -1,7 +1,5 @@
-#pragma once
 #include "./database.hpp"
-#include "../dependencies.h"
-
+#include"../main.hpp"
 
 Database::Database(const std::string& db){ 
      

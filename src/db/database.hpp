@@ -1,8 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <sqlite3.h> 
-#include"../dependencies.h"
-
+#include "../main.hpp"
 class Database{
   public:
     Database(const std::string&);

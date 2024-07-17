@@ -1,7 +1,6 @@
 
 #pragma once
-#include"main.hpp"
-#include "./cgamemode.hpp"
+#include "./game_logic/cgamemode.hpp"
 int main(){
   
   if(start_instance_cgamemode()==1){
