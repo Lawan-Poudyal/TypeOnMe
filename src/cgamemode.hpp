@@ -1,4 +1,5 @@
-#include"./dependencies.h"
+#include"dependencies.h"
+#include"main.hpp"
 int start_instance_cgamemode(){
 
     int spaces = 0;
