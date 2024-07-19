@@ -1,6 +1,7 @@
-#include"dependencies.h"
-using namespace std;
+#pragma once
+#include"../main.hpp"
 
+using namespace std;
 time_t start_timer(){
   
     time_t start_time = time(NULL);

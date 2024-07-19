@@ -1,8 +1,4 @@
-#pragma once
-#include <raylib.h>
-#include <string.h>
-#include "db/database.hpp"
-
+#include "./login.hpp"
 #define MAX_INPUT_CHAR 16 
 
 using namespace std;
@@ -25,8 +21,8 @@ int main() {
     bool typingUsername = true;
     bool typingPassword = false;
 
-    Database db("credentials.db");
-    db.query_data("",1);
+    //Database db("credentials.db");
+    //db.query_data("",1);
     int usernameLength = 0;
     int passwordLength = 0;
 
@@ -46,7 +42,6 @@ int main() {
     
 
     while(WindowShouldClose() == false){
-        
 
         if (IsKeyPressed(KEY_TAB)){
             typingUsername = !typingUsername;
@@ -83,7 +78,7 @@ int main() {
           // gameState = GAMEMODE;
           string sUsername = username;
           string sPassword = password;
-          db.AddEntry(sUsername,sPassword);
+          //db.AddEntry(sUsername,sPassword);
           cout << sUsername << "+" << sPassword; 
         }
 

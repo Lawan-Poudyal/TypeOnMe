@@ -1,4 +1,6 @@
-#include "dependencies.h"
+#pragma once
+#include "../main.hpp"
+
 float accuracy(vector<string> typedWords,vector<string> totWords){ 
   int incorWordCount=0;   
   for(int i=0;i<typedWords.size();i++){

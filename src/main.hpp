@@ -1,6 +1,16 @@
-#include "dependencies.h"
-#include "wpm.hpp"
-#include "accuracy.hpp"
+#pragma once
+#include<chrono>
+#include<cstring>
+#include<raylib.h>
+#include<iostream>
+#include<string>
+#include<vector>
+#include<ctime>
+#include<unistd.h>
+#include<numeric>
+#define M_MAX_INPUT_CHARS 500
+
+
 
 // Declarations and definition of global variables
 using namespace std;
@@ -8,17 +18,13 @@ using namespace std;
 const int init_width  = GetScreenWidth();
 const int init_height = GetScreenHeight();
 void clearWindow();
-int global_seed = time(NULL);
-int gtotal_letter_count = 0;
+extern int global_seed = time(NULL);
+extern int gtotal_letter_count = 0;
 int in_positionY = init_height / 2 - 10;
 int in_positionX = init_width / 2;
 vector<string> typedWords;
-vector<string> ext_random_words;
+extern vector<string> ext_random_words;
 int count_for_closing_window_after_wpm = 0;
-typedef enum {
-    LOGIN,
-    GAMEMODE,
-} gameState;
   
 
 
@@ -31,7 +37,7 @@ public:
     int pos2_y;
 
     Cursor(const char* word, int letter_count, bool drawCursor, int c_height) {
-        if (drawCursor && letter_count < MAX_INPUT_CHAR) {
+        if (drawCursor && letter_count < M_MAX_INPUT_CHARS) {
             DrawLine(MeasureText(word, 30) + in_positionX + 10 + GetScreenWidth() / 2, in_positionY + GetScreenHeight() / 2  - c_height / 2,
                      in_positionX + MeasureText(word, 30) + 10 + GetScreenWidth() / 2, in_positionY + c_height / 2 + GetScreenHeight()/ 2 , RAYWHITE);
         }
