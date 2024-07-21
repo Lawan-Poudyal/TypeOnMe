@@ -21,15 +21,14 @@ int main() {
     bool typingUsername = true;
     bool typingPassword = false;
 
-    //Database db("credentials.db");
-    //db.query_data("",1);
+    Database db("credentials.db");
+    db.query_data("",1);
     int usernameLength = 0;
     int passwordLength = 0;
 
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
-    //gameState = LOGIN;
 
 
     InitWindow(screenWidth , screenHeight, "TypeOnMe");
@@ -41,7 +40,7 @@ int main() {
 
     
 
-    while(WindowShouldClose() == false){
+    while(!WindowShouldClose()){
 
         if (IsKeyPressed(KEY_TAB)){
             typingUsername = !typingUsername;
@@ -78,7 +77,7 @@ int main() {
           // gameState = GAMEMODE;
           string sUsername = username;
           string sPassword = password;
-          //db.AddEntry(sUsername,sPassword);
+          db.AddEntry(sUsername,sPassword);
           cout << sUsername << "+" << sPassword; 
         }
 

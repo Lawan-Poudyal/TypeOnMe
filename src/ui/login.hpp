@@ -1,7 +1,6 @@
 #pragma once
 #include <raylib.h>
 #include <string>
-#include "../main.hpp"
+#include <iostream>
 #include "../db/database.hpp"
-
 int start_login_screen();

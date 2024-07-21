@@ -18,12 +18,12 @@ using namespace std;
 const int init_width  = GetScreenWidth();
 const int init_height = GetScreenHeight();
 void clearWindow();
-extern int global_seed = time(NULL);
-extern int gtotal_letter_count = 0;
+int global_seed = time(NULL);
+int gtotal_letter_count = 0;
 int in_positionY = init_height / 2 - 10;
 int in_positionX = init_width / 2;
 vector<string> typedWords;
-extern vector<string> ext_random_words;
+vector<string> ext_random_words;
 int count_for_closing_window_after_wpm = 0;
   
 
