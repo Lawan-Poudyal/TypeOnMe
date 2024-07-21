@@ -1,6 +1,7 @@
 #pragma once
-#include "./login.hpp"
-#include "./register.hpp"
+#include "./login_example.hpp"
+#include "./register_example.hpp"
+#include"../db/database.hpp"
 #define MAX_INPUT_CHAR 16 
 
 using namespace std;
@@ -17,18 +18,19 @@ public:
     Rectangle loginButton;
     Rectangle guestButton;
     Database db;
-
+    SceneManager* scenemanager;
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
-    LoginScene() : db("credentials.db") {
+    
+    LoginScene(SceneManager* scenemanager) : db("credentials.db") {
         db.query_data("", 1);
-
+        this->scenemanager = scenemanager;
         mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
         loginButton = {screenWidth / 2 - 50 - 60, screenHeight / 2, 120, 45};
         guestButton = {screenWidth / 2 + 80 - 60, screenHeight / 2, 120, 45};
     }
 
-    void on_entry(): override{
+    void on_entry() override{
         mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
         loginButton = {screenWidth / 2 - 50 - 60, screenHeight / 2, 120, 45};
         guestButton = {screenWidth / 2 + 80 - 60, screenHeight / 2, 120, 45};
@@ -76,7 +78,7 @@ public:
         return (CheckCollisionPointRec(GetMousePosition(), button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON));
     }
 
-    void on_update(float dt) override {
+    void on_update() override {
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
