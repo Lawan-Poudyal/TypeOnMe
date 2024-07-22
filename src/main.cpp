@@ -197,6 +197,19 @@ void DrawTextInBounds(const string& prev_word, const string& current_word, const
 
 }
 
+void DrawTypedWord(const char* word, const char* correct_word, int x, int y, int fontSize) {
+    int cursor_x = x;
+    size_t word_len = strlen(word);
+    size_t correct_len = strlen(correct_word);
+
+    for (size_t i = 0; i < word_len; i++) {
+        Color color = (i < correct_len && word[i] == correct_word[i]) ? RAYWHITE : RED;
+        char temp[2] = {word[i], '\0'};
+        DrawText(temp, cursor_x, y, fontSize, color);
+        cursor_x += MeasureText(temp, fontSize) + 2;
+    }
+}
+
 int main(void) {
     char* word = (char*)malloc(sizeof(char) * (MAX_INPUT_CHAR + 1));
     word[0] = '\0';
@@ -332,7 +345,7 @@ int main(void) {
             // Draw the typed word
             int wordWidth = MeasureText(word, 30);
             int textStartX = CENTER_X - wordWidth / 2;
-            DrawText(word, textStartX, CENTER_Y, 30, RAYWHITE);
+            DrawTypedWord(word, word_queue[0].c_str(), textStartX, CENTER_Y, 30);
 
             // Draw the cursor
             if (drawCursor) {
