@@ -17,7 +17,8 @@ int main(){
   SetTargetFPS(200);
   scenemanager.switch_to("registerpage");
   
-  while(!WindowShouldClose()){ 
+  while(!WindowShouldClose()){
+    BeginDrawing();
     scenemanager.update();
     scenemanager.poll_event();
   }

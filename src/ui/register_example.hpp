@@ -104,7 +104,6 @@ inputField inputFieldArray[3];
 
     void on_update() override{
 
-            BeginDrawing();
             ClearBackground(RAYWHITE);
             DrawText("User Registration Page",
                       inputFieldArray[0].posX-MeasureText("Username:",DEFAULT_FONT_SIZE),
@@ -158,7 +157,6 @@ inputField inputFieldArray[3];
             if(password){
 
             }
-
             EndDrawing();
 
             return;
