@@ -14,7 +14,6 @@ public:
     (this->scenemanager) = scenemanager;
   }  
   void on_entry() override {
-            InitWindow(GetScreenWidth(),GetScreenHeight(), "TypeOnMe");
             return;
     }
 
@@ -32,7 +31,8 @@ public:
     void on_event(){
        if(IsKeyPressed(KEY_TAB)){
           scenemanager->switch_to("login");
-        }
+          return;
+       }
     }
       private:
 };

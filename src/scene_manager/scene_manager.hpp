@@ -6,19 +6,21 @@ class Scene {
 public:
     virtual void on_entry() {
         throw std::runtime_error("on_entry hasn't been implemented yet.");
-    }
+    }//When a scene is started,this method is called.
 
     virtual void on_event() {
         throw std::runtime_error("on_event hasn't been implemented yet.");
     }
+    //When an event related functionality is to be implemented.
 
     virtual void on_update() {
         throw std::runtime_error("on_update hasn't been implemented yet.");
     }
-
+    //The things to update on the screen on each frame.
     virtual void on_exit() {
         throw std::runtime_error("on_exit hasn't been implemented yet.");
     }
+    //When the function is to be exited
 };
 
 class SceneManager {

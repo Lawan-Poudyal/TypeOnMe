@@ -18,11 +18,10 @@ public:
     Rectangle loginButton;
     Rectangle guestButton;
     Database db;
-    SceneManager* scenemanager;
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
     
-    LoginScene(SceneManager* scenemanager) : db("credentials.db") {
+    LoginScene(SceneManager* scenemanager) : db("credentials.db"), scenemanager(nullptr){
         db.query_data("", 1);
         this->scenemanager = scenemanager;
         mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
@@ -41,6 +40,14 @@ public:
             typingUsername = !typingUsername;
             typingPassword = !typingPassword;
         }
+
+
+        if (IsKeyPressed(KEY_ENTER)) {
+          
+          scenemanager->switch_to("registerpage");
+  
+        }
+
 
         if (IsKeyPressed(KEY_BACKSPACE)) {
             if (typingUsername && usernameLength > 0) {
@@ -108,7 +115,9 @@ public:
     
 
     void on_exit() override {
-        CloseWindow();
+      return;
     }
+  private:
+    SceneManager* scenemanager;
 };
 
