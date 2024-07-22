@@ -157,22 +157,25 @@ float accuracy(const vector<string>& typedWords, const vector<string>& all_displ
 }
 
 void DrawTextInBounds(const string& prev_word, const string& current_word, const string& next_word, int start_x, int start_y, int max_width, int max_height) {
-    Rectangle rect = {float(start_x), float(start_y), float(max_width-300), float(max_height)};
+    Rectangle rect = {float(start_x), float(start_y), float(max_width), float(max_height)};
     DrawRectangleRec(rect, BLUE);
+
+    //Restricts drawing operations to within the specified rectangle
+    BeginScissorMode(start_x, start_y, max_width, max_height);
 
     int word_height = 40;
     int padding = 20;
 
     // Calculate positions
     int left_x = start_x + padding;
-    int center_x = start_x + (max_width - 300) / 2;
-    int right_x = start_x + max_width - 300 - padding;
+    int center_x = start_x + (max_width) / 2;
+    int right_x = start_x + max_width - padding;
     int y = start_y + (max_height - word_height) / 2;
 
     // Calculate animated positions (right to left)
     float anim_left_x = left_x + (center_x - left_x) * (1 - animation_progress);
     float anim_center_x = center_x + (right_x - center_x) * (1 - animation_progress);
-    float anim_right_x = right_x + (max_width - 300) * (1 - animation_progress);
+    float anim_right_x = right_x + (max_width) * (1 - animation_progress);
 
     // Draw previous word (left)
     DrawText(prev_word.c_str(), anim_left_x, y, 30, LIGHTGRAY);
@@ -184,6 +187,9 @@ void DrawTextInBounds(const string& prev_word, const string& current_word, const
     // Draw next word (right)
     int next_word_width = MeasureText(next_word.c_str(), 30);
     DrawText(next_word.c_str(), anim_right_x - next_word_width, y, 30, LIGHTGRAY);
+
+    EndScissorMode();
+
 }
 
 int main(void) {
@@ -294,7 +300,10 @@ int main(void) {
             ClearBackground(BLACK);
 
             // Draw the three words in the box
-            DrawTextInBounds(prev_word, word_queue[0], word_queue[1], 410, 65, 1150, 150);
+            int box_width = 740;
+            int box_height = 150;
+
+            DrawTextInBounds(prev_word, word_queue[0], word_queue[1], 410, 65, box_width, box_height);
 
             // Sentence Button
             DrawRectangleRec(button_0.rect, button_0.color);
