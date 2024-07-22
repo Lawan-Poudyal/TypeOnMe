@@ -25,8 +25,8 @@ public:
         db.query_data("", 1);
         this->scenemanager = scenemanager;
         mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
-        loginButton = {screenWidth / 2 - 50 - 60, screenHeight / 2, 120, 45};
-        guestButton = {screenWidth / 2 + 80 - 60, screenHeight / 2, 120, 45};
+        loginButton = {screenWidth / 2 - 110, screenHeight / 2, 120, 45};
+        guestButton = {screenWidth / 2 + 20, screenHeight / 2, 120, 45};
     }
 
     void on_entry() override{

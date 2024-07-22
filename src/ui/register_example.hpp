@@ -6,8 +6,8 @@
 #include "./login_example.hpp"
 #include "./register_example.hpp"
 #define MAX_INPUT_CHAR 16 
-#define DEFAULT_FONT_SIZE 30
-
+#define DEFAULT_FONT_SIZE 20
+#define DEFAULT_HEADER_FONT_SIZE 30
 class RegistrationPage : public Scene {
 public:  
  SceneManager* scenemanager;
@@ -106,6 +106,11 @@ inputField inputFieldArray[3];
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
+            DrawText("User Registration Page",
+                      inputFieldArray[0].posX-MeasureText("Username:",DEFAULT_FONT_SIZE),
+                      init_height/2-200,
+                      DEFAULT_HEADER_FONT_SIZE,
+                      BLACK);
             DrawText("Username:",
                       inputFieldArray[0].posX-MeasureText("Username:",DEFAULT_FONT_SIZE),
                       inputFieldArray[0].posY,
