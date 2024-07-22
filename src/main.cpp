@@ -158,7 +158,12 @@ float accuracy(const vector<string>& typedWords, const vector<string>& all_displ
 
 void DrawTextInBounds(const string& prev_word, const string& current_word, const string& next_word, int start_x, int start_y, int max_width, int max_height) {
     Rectangle rect = {float(start_x), float(start_y), float(max_width), float(max_height)};
-    DrawRectangleRec(rect, BLUE);
+
+    //Rounded attributes
+    float roundness = 0.3f;
+    int segments = 10;
+        
+    DrawRectangleRounded(rect, roundness, segments, BLUE);
 
     //Restricts drawing operations to within the specified rectangle
     BeginScissorMode(start_x, start_y, max_width, max_height);
