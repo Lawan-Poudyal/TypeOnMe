@@ -115,46 +115,46 @@ public:
             DrawText(
                 "User Login Page",
                 GetScreenWidth()/2 - INPUT_BOX_WIDTH ,
-                GetScreenHeight()/2- INPUT_BOX_HEIGHT*2-MARGIN*6,
+                GetScreenHeight()/2 -MARGIN*8,
                 DEFAULT_HEADER_FONT_SIZE,
                 BLACK);
 
             DrawText(
                 "Username:", 
-                GetScreenWidth()/2  - INPUT_BOX_WIDTH / 2 - MARGIN * 3,
-                GetScreenHeight() / 2 - INPUT_BOX_HEIGHT - ELEMENT_SPACING*2,
+                GetScreenWidth()/2  - INPUT_BOX_WIDTH / 2 -MARGIN*3-MeasureText("Username:",DEFAULT_FONT_SIZE),
+                GetScreenHeight() / 2 - ELEMENT_SPACING*2,
                 DEFAULT_FONT_SIZE,
                 BLACK);
             DrawText(
                 username,
-                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 + MARGIN * 3,
-                GetScreenHeight()/ 2 - INPUT_BOX_HEIGHT - ELEMENT_SPACING*2,
+                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
+                GetScreenHeight()/ 2 - ELEMENT_SPACING*2,
                 DEFAULT_FONT_SIZE,
                 BLACK);
         
             if (typingUsername) DrawRectangleLines( 
-                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 + MARGIN * 3,
-                GetScreenHeight()/ 2 - INPUT_BOX_HEIGHT - ELEMENT_SPACING*2,
+                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
+                GetScreenHeight()/ 2  - ELEMENT_SPACING*2,
                 INPUT_BOX_WIDTH,
                 INPUT_BOX_HEIGHT,
                 RED);
             else DrawRectangleLines(
-                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 + MARGIN * 3,
-                GetScreenHeight() / 2 - INPUT_BOX_HEIGHT - ELEMENT_SPACING*2,
+                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
+                GetScreenHeight() / 2  - ELEMENT_SPACING*2,
                 INPUT_BOX_WIDTH,
                 INPUT_BOX_HEIGHT,
                 LIGHTGRAY);
         
             DrawText(
                 "Password:",
-                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
+                GetScreenWidth()/2  - INPUT_BOX_WIDTH / 2 -MARGIN*3-MeasureText("Password:",DEFAULT_FONT_SIZE),
                 GetScreenHeight() / 2 - ELEMENT_SPACING,
                 DEFAULT_FONT_SIZE,
                 BLACK);
             for (int i = 0; i < passwordLength; i++) {
                 DrawText(
                     "*", 
-                    GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 + MARGIN * 3 + i * 10,
+                    GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3 + i * 10,
                     GetScreenHeight() / 2 - ELEMENT_SPACING,
                     DEFAULT_FONT_SIZE,
                     BLACK);
@@ -162,9 +162,9 @@ public:
             //DrawText(password, GetScreenWidth()/2 - 210 + 20 + 100 + 20 , GetScreenHeight()/2 + 20 - 150 + 20 +20, 20, BLACK );
         
             if (typingPassword) DrawRectangleLines(
-                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 + MARGIN * 3,
+                GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
                 GetScreenHeight() / 2 - ELEMENT_SPACING, INPUT_BOX_WIDTH, INPUT_BOX_HEIGHT, RED);
-            else DrawRectangleLines(GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 + MARGIN * 3, GetScreenHeight() / 2 - ELEMENT_SPACING, INPUT_BOX_WIDTH, INPUT_BOX_HEIGHT, LIGHTGRAY);        
+            else DrawRectangleLines(GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3, GetScreenHeight() / 2 - ELEMENT_SPACING, INPUT_BOX_WIDTH, INPUT_BOX_HEIGHT, LIGHTGRAY);        
           
             DrawRectangleRounded(loginButton, 1, 6 , LIGHTGRAY);
             DrawText(

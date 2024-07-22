@@ -5,9 +5,18 @@
 #include "../scene_manager/scene_manager.hpp"
 #include "./login_example.hpp"
 #include "./register_example.hpp"
-#define MAX_INPUT_CHAR 16 
+
+#define MAX_INPUT_CHAR_UP 10
+#define MARGIN 20
+#define ELEMENT_SPACING 40
+#define INPUT_BOX_WIDTH 200
+#define INPUT_BOX_HEIGHT 30
+#define BUTTON_WIDTH 120
+#define BUTTON_HEIGHT 45
 #define DEFAULT_FONT_SIZE 20
 #define DEFAULT_HEADER_FONT_SIZE 30
+
+
 class RegistrationPage : public Scene {
 public:  
  SceneManager* scenemanager;
@@ -36,30 +45,30 @@ inputField inputFieldArray[3];
 
    inputFieldArray[0] = {
      .name="username",
-     .posX=init_width/ 2 - 20, 
-     .posY=init_height/ 2 - 130,
-     .width=200,
-     .height=30,
+     .posX=GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN * 3, 
+     .posY=GetScreenHeight()/ 2 -ELEMENT_SPACING*2,
+     .width=INPUT_BOX_WIDTH,
+     .height=INPUT_BOX_HEIGHT,
      .active=true,
      .color=GRAY
    };
 
    inputFieldArray[1] = {
      .name="password",
-     .posX=init_width/ 2 - 20, 
-     .posY=init_height/ 2 - 90,
-     .width=200,
-     .height=30,
+     .posX=GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN * 3, 
+     .posY=GetScreenHeight()/ 2 - ELEMENT_SPACING,
+     .width=INPUT_BOX_WIDTH,
+     .height=INPUT_BOX_HEIGHT,
      .active=false,
      .color=GRAY,
    };
 
    inputFieldArray[2] = {
      .name="repassword",
-     .posX=init_width/ 2 - 20, 
-     .posY=init_height/ 2 - 50,
-     .width=200,
-     .height=30,
+     .posX=GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN * 3, 
+     .posY=GetScreenHeight()/ 2 ,
+     .width=INPUT_BOX_WIDTH,
+     .height=INPUT_BOX_HEIGHT,
      .active=false,
      .color=GRAY,
    };
@@ -107,7 +116,7 @@ inputField inputFieldArray[3];
             ClearBackground(RAYWHITE);
             DrawText("User Registration Page",
                       inputFieldArray[0].posX-MeasureText("Username:",DEFAULT_FONT_SIZE),
-                      init_height/2-200,
+                      GetScreenHeight()/2-MARGIN*8,
                       DEFAULT_HEADER_FONT_SIZE,
                       BLACK);
             DrawText("Username:",
