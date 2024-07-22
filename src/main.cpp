@@ -224,7 +224,10 @@ int main(void) {
     init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
     init_time_buttons();
 
-    vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn", "vase", "windmill", "x-ray", "yarn"};
+    vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", 
+    "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", 
+    "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", 
+    "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn", "vase", "windmill", "x-ray", "yarn"};
 
     WordGenerator word_generator(dictionary, global_seed);
     deque<string> word_queue;
