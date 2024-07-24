@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cstring>
+#include <sstream>
 
 using namespace std;
 
@@ -62,6 +63,33 @@ public:
             DrawLine(cursorX, CENTER_Y - c_height / 2,
                      cursorX, CENTER_Y + c_height / 2, RAYWHITE);
         }
+    }
+};
+
+class SentenceGenerator {
+private:
+    vector<string> sentences;
+    vector<string> unused_sentences;
+    int seed;
+
+public:
+    SentenceGenerator(const vector<string>& sent, int s) : sentences(sent), seed(s) {
+        srand(seed);
+        resetUnusedSentences();
+    }
+
+    void resetUnusedSentences(){
+        unused_sentences = sentences;
+        random_shuffle(unused_sentences.begin(), unused_sentences.end());
+    }
+
+    string getNextSentence() {
+        if(unused_sentences.empty()){
+            resetUnusedSentences();
+        }
+        string sentence = unused_sentences.back();
+        unused_sentences.pop_back();
+        return sentence;   
     }
 };
 
@@ -201,6 +229,48 @@ void DrawTextInBounds(const string& prev_word, const string& current_word, const
 
 }
 
+void DrawSentenceInBounds(const string& sentence, int start_x, int start_y, int max_width, int max_height) {
+    Rectangle rect = {float(start_x), float(start_y), float(max_width), float(max_height)};
+
+    float roundness = 0.3f;
+    int segments = 10;
+        
+    DrawRectangleRounded(rect, roundness, segments, BLUE);
+
+    BeginScissorMode(start_x, start_y, max_width, max_height);
+    
+    int font_size = 20;
+    int padding = 20;
+    int line_spacing = 5;
+
+    int x = start_x + padding;
+    int y = start_y + padding;
+
+    vector<string> words;
+    stringstream ss(sentence);
+    string word;
+    while (ss >> word) {
+        words.push_back(word);
+    }
+
+    string line;
+    for (const auto& word : words) {
+        string test_line = line + (line.empty() ? "" : " ") + word;
+        if (MeasureText(test_line.c_str(), font_size) <= max_width - 2 * padding) {
+            line = test_line;
+        } else {
+            DrawText(line.c_str(), x, y, font_size, WHITE);
+            y += font_size + line_spacing;
+            line = word;
+        }
+    }
+    if (!line.empty()) {
+        DrawText(line.c_str(), x, y, font_size, WHITE);
+    }
+
+    EndScissorMode();
+}
+
 void DrawTypedWord(const char* word, const char* correct_word, int x, int y, int fontSize) {
     int cursor_x = x;
     size_t word_len = strlen(word);
@@ -229,6 +299,12 @@ int main(void) {
     init_time_buttons();
 
     vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn", "vase", "windmill", "x-ray", "yarn"};
+    vector<string> sentences = {
+    "Overcoming betrayal is a profound and challenging journey that requires resilience and self-compassion. It involves acknowledging the hurt and allowing oneself to grieve the loss of trust. Healing begins with introspection, understanding that the betrayal reflects more on the betrayer's character than on one's worth."
+    };
+    bool sentence_mode = false;
+    SentenceGenerator sentence_generator(sentences, global_seed);
+    string current_sentence = "";
 
     WordGenerator word_generator(dictionary, global_seed);
     deque<string> word_queue;
@@ -239,48 +315,91 @@ int main(void) {
 
     bool animating = false;
 
-    while (!WindowShouldClose()) {
-        int remaining_time = DrawTime();
+  while (!WindowShouldClose()) {
+    int remaining_time = DrawTime();
 
-        if (!game_over) {
-            if (!typing_started) {
-                // Handle time button clicks
-                for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
-                    if (is_mouse_over_button(time_buttons[i])) {
-                        time_buttons[i].color = GRAY;
-                        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                            switch (i) {
-                                case 0: test_duration = 60; break;
-                                case 1: test_duration = 45; break;
-                                case 2: test_duration = 30; break;
-                            }
+    if (!game_over) {
+        if (!typing_started) {
+            // Handle time button clicks
+            for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
+                if (is_mouse_over_button(time_buttons[i])) {
+                    time_buttons[i].color = GRAY;
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                        switch (i) {
+                            case 0: test_duration = 60; break;
+                            case 1: test_duration = 45; break;
+                            case 2: test_duration = 30; break;
                         }
-                    } else {
-                        time_buttons[i].color = DARKGRAY;
                     }
+                } else {
+                    time_buttons[i].color = DARKGRAY;
                 }
             }
+        }
 
-            if (!typing_started && letter_count > 0) {
-                typing_started = true;
-                typing_start_time = GetTime();
+        // Handle mode selection buttons
+        if (is_mouse_over_button(button_0)) {
+            button_0.color = GRAY;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
+                sentence_mode = true;
+                current_sentence = sentence_generator.getNextSentence();
+                memset(word, 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
+                letter_count = 0;
+                total_characters_typed = 0;
+                typedWords.clear();
+                all_displayed_words.clear();
             }
+        } else {
+            button_0.color = RED;
+        }
 
-            if ((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)) {
-                total_characters_typed--;
-                letter_count--;
-                word[letter_count] = '\0';
-            } else if (letter_count < MAX_INPUT_CHAR) {
-                int key = GetCharPressed();
+        if (is_mouse_over_button(button_1)) {
+            button_1.color = GRAY;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
+                sentence_mode = false;
+                word_queue.clear();
+                for (int i = 0; i < 3; ++i) {
+                    word_queue.push_back(word_generator.getNextWord());
+                }
+                prev_word = "";
+                memset(word, 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
+                letter_count = 0;
+                total_characters_typed = 0;
+                typedWords.clear();
+                all_displayed_words.clear();
+            }
+        } else {
+            button_1.color = RED;
+        }
 
-                if ((key >= 32 && key <= 125) || key == ' ') {
-                    word[letter_count] = (char)key;
+        if (!typing_started && letter_count > 0) {
+            typing_started = true;
+            typing_start_time = GetTime();
+        }
 
-                    if (key == ' ' || word[letter_count] == ' ') {
-                        word[letter_count] = '\0';
+        if ((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)) {
+            total_characters_typed--;
+            letter_count--;
+            word[letter_count] = '\0';
+        } 
+        int key = GetCharPressed();
+
+        if (letter_count < MAX_INPUT_CHAR) {
+
+            if ((key >= 32 && key <= 125) || key == ' ') {
+                word[letter_count] = (char)key;
+                letter_count++;
+                total_characters_typed++;
+                } 
+            }
+                if (!sentence_mode && letter_count > 0 && (key == ' ' || word[letter_count - 1] == ' ')) {
+                    if (word[letter_count - 1] == ' ') {
+                        word[letter_count - 1] = '\0';  // Remove the space
+                    } else {
+                        word[letter_count] = '\0';  // Null-terminate the word
+                    }
                         typedWords.push_back(word);
                         
-                        // Shift words
                         prev_word = word_queue.front();
                         word_queue.pop_front();
                         word_queue.push_back(word_generator.getNextWord());
@@ -291,60 +410,82 @@ int main(void) {
 
                         animating = true;
                         animation_progress = 0.0f;
-                    } else {
-                        letter_count++;
-                    }
-                    total_characters_typed++;
                 }
-            }
+                
+            
 
-            // Handle animation
-            if (animating) {
-                animation_progress += GetFrameTime() / ANIMATION_DURATION;
-                if (animation_progress >= 1.0f) {
-                    animation_progress = 1.0f;
-                    animating = false;
+        // Handle animation
+        if (animating && !sentence_mode) {
+            animation_progress += GetFrameTime() / ANIMATION_DURATION;
+            if (animation_progress >= 1.0f) {
+                animation_progress = 1.0f;
+                animating = false;
+            }
+        }
+
+        cursorContent += GetFrameTime();
+        if (cursorContent >= 0.5f) {
+            cursorContent = 0.0f;
+            drawCursor = !drawCursor;
+        }
+
+        if (remaining_time <= 0) {
+            game_over = true;
+            typing_end_time = GetTime();
+        }
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        // Draw the text in the box
+        int box_width = 740;
+        int box_height = 150;
+
+        if (sentence_mode) {
+            DrawSentenceInBounds(current_sentence, 410, 65, box_width, box_height);
+            
+            // Draw the typed word with wrapping
+            int fontSize = 20;
+            int textStartY = CENTER_Y + box_height / 2 + 20; // Position below the box
+            int maxTypingWidth = box_width - 40; // Leave some padding
+            int textStartX = 410; // Start from the left of the box with padding
+            
+            int currentLineWidth = 0;
+            int currentLineY = textStartY;
+            string currentLine;
+            
+            for (int i = 0; i < letter_count; i++) {
+                char currentChar[2] = {word[i], '\0'};
+                int charWidth = MeasureText(currentChar, fontSize);
+                
+                if (currentLineWidth + charWidth > maxTypingWidth) {
+                    // Draw the current line and move to the next
+                    DrawText(currentLine.c_str(), textStartX, currentLineY, fontSize, WHITE);
+                    currentLineY += fontSize + 5; // Move to next line
+                    currentLine.clear();
+                    currentLineWidth = 0;
                 }
+                
+                currentLine += word[i];
+                currentLineWidth += charWidth;
             }
+            
+            // Draw the last line
+            DrawText(currentLine.c_str(), textStartX, currentLineY, fontSize, WHITE);
 
-            cursorContent += GetFrameTime();
-            if (cursorContent >= 0.5f) {
-                cursorContent = 0.0f;
-                drawCursor = !drawCursor;
+            // Calculate cursor position
+            int cursorX = textStartX + MeasureText(currentLine.c_str(), fontSize);
+            int cursorY = currentLineY;
+
+            // Draw the cursor
+            if (drawCursor) {
+                int cursorHeight = fontSize + 10;
+                DrawLine(cursorX, cursorY - cursorHeight / 2, 
+                        cursorX, cursorY + cursorHeight / 2, RAYWHITE);
             }
-
-            if (remaining_time <= 0) {
-                game_over = true;
-                typing_end_time = GetTime();
-            }
-
-            BeginDrawing();
-            ClearBackground(BLACK);
-
-            // Draw the three words in the box
-            int box_width = 740;
-            int box_height = 150;
-
+        }
+        else {
             DrawTextInBounds(prev_word, word_queue[0], word_queue[1], 410, 65, box_width, box_height);
-
-            // Sentence Button
-            DrawRectangleRec(button_0.rect, button_0.color);
-            DrawText("Sentence", button_0.rect.x + button_0.rect.width/2 - MeasureText("Words", 10) - 10, button_0.rect.y + button_0.rect.height/2 - 20 / 2, 20, WHITE);
-
-            // Word Button
-            DrawRectangleRec(button_1.rect, button_1.color);
-            DrawText("Words", button_1.rect.x + button_1.rect.width/2 - MeasureText("Words", 10) - 10, button_1.rect.y + button_1.rect.height/2 - 20 / 2, 20, WHITE);
-
-            // Draw time buttons
-            if (!typing_started) {
-                for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
-                    DrawRectangleRec(time_buttons[i].rect, time_buttons[i].color);
-                    DrawText(time_options[i], 
-                             time_buttons[i].rect.x + 10, 
-                             time_buttons[i].rect.y + 10, 
-                             20, WHITE);
-                }
-            }
 
             // Draw the typed word
             int wordWidth = MeasureText(word, 30);
@@ -356,30 +497,48 @@ int main(void) {
                 DrawLine(textStartX + wordWidth, CENTER_Y - 25, 
                          textStartX + wordWidth, CENTER_Y + 25, RAYWHITE);
             }
+        }
 
-            // Draw current WPM
-            float current_wpm = calculate_wpm();
-            DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
+        // Draw mode selection buttons
+        DrawRectangleRec(button_0.rect, button_0.color);
+        DrawText("Sentence", button_0.rect.x + button_0.rect.width/2 - MeasureText("Sentence", 10) - 10, button_0.rect.y + button_0.rect.height/2 - 20 / 2, 20, WHITE);
 
-            EndDrawing();
-        } else {
-            // Game over state
-            BeginDrawing();
-            ClearBackground(BLACK);
+        DrawRectangleRec(button_1.rect, button_1.color);
+        DrawText("Words", button_1.rect.x + button_1.rect.width/2 - MeasureText("Words", 10) - 10, button_1.rect.y + button_1.rect.height/2 - 20 / 2, 20, WHITE);
 
-            float wpm = calculate_wpm();
-            float acc = accuracy(typedWords, all_displayed_words);
-            DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
-            DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
-
-            EndDrawing();
-
-            if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                break;
+        // Draw time buttons
+        if (!typing_started) {
+            for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
+                DrawRectangleRec(time_buttons[i].rect, time_buttons[i].color);
+                DrawText(time_options[i], 
+                         time_buttons[i].rect.x + 10, 
+                         time_buttons[i].rect.y + 10, 
+                         20, WHITE);
             }
         }
-    }
 
+        // Draw current WPM
+        float current_wpm = calculate_wpm();
+        DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
+
+        EndDrawing();
+    } else {
+        // Game over state
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        float wpm = calculate_wpm();
+        float acc = accuracy(typedWords, all_displayed_words);
+        DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
+        DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
+
+        EndDrawing();
+
+        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            break;
+        }
+    }
+}
     free(word);
     CloseWindow();
     return 0;
