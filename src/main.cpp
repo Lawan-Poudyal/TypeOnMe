@@ -1,6 +1,7 @@
 #include "dependencies.h"
 #include"wpm.hpp"
 #include"accuracy.hpp"
+#include <raylib.h>
 
 //Declarations and definition of global variables
 using namespace std;
