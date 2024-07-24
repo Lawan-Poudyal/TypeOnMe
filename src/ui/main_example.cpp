@@ -15,7 +15,7 @@ int main(){
   InitWindow(1440, 720, "TypeOnMe");
   
   SetTargetFPS(200);
-  scenemanager.switch_to("registerpage");
+  scenemanager.switch_to("login");
   
   while(!WindowShouldClose()){
     BeginDrawing();
