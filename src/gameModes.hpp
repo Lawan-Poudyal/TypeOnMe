@@ -6,3 +6,5 @@ typedef enum {
     COMPETITIVEMODE,
     LEADERBORAD,
 } gameState;
+
+

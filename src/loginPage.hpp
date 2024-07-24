@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <raylib.h>
 #include "gameModeChoose.hpp"
 
@@ -11,9 +12,6 @@
 #define INPUT_BOX_HEIGHT 30
 #define BUTTON_WIDTH 120
 #define BUTTON_HEIGHT 45
-
-
-
 
 
 void DrawLoginPage (gameState currentState) {
@@ -48,7 +46,7 @@ void DrawLoginPage (gameState currentState) {
             }
         }
         int key = GetCharPressed();
-            if(key >0 && key != KEY_SPACE){
+            if((int)toupper((char)key) >= 65 && (int)toupper((char)key) <= 90 && key != KEY_SPACE){
                 if(typingUsername && usernameLength < MAX_INPUT_CHAR_UP){
                     username[usernameLength]= (char)key;
                     username[usernameLength + 1] = '\0';

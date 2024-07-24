@@ -26,6 +26,7 @@ public:
         DrawText(label.c_str(), rect.x + rect.width / 4, rect.y + rect.height / 4, 20, BLACK);
     }
 
+
     void Update() {
         isPressed = IsKeyDown(keycode);
     }
