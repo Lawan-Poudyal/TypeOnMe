@@ -5,6 +5,8 @@
 #include "../scene_manager/scene_manager.hpp"
 #include "./login_example.hpp"
 #include "./register_example.hpp"
+#include<cstdlib>
+#include<cstring>
 
 #define MAX_INPUT_CHAR_UP 10
 #define MARGIN 20
@@ -22,7 +24,18 @@ public:
  SceneManager* scenemanager;
  RegistrationPage(SceneManager* scenemanager){
     (this->scenemanager) = scenemanager;
-  }
+     memset(username,0,sizeof(char)*MAX_INPUT_CHAR_UP);
+     memset(password,0,sizeof(char)*MAX_INPUT_CHAR_UP);
+     memset(rpassword,0,sizeof(char)*MAX_INPUT_CHAR_UP);
+     usernameLength=0;
+     passwordLength=0;
+     rpasswordLength=0;
+ }
+ ~RegistrationPage(){
+    delete username;
+    delete password;
+    delete rpassword;
+ }
  
  void on_entry() override {
    
@@ -68,9 +81,6 @@ public:
  }
 
 void on_exit() override{
-  free(username);
-  free(password);
-  free(rpassword);
   return;
 }
 
@@ -84,10 +94,15 @@ void on_event(){
       if (IsKeyPressed(KEY_BACKSPACE)) {
          if (inputFieldArray[0].active && usernameLength > 0) {
              username[--usernameLength] = '\0';
-         } else if (inputFieldArray[1].active && passwordLength > 0) {
+         }
+         else if (inputFieldArray[1].active && passwordLength > 0) {
              password[--passwordLength] = '\0';
          }
-     }
+
+          else if (inputFieldArray[2].active && rpasswordLength > 0) {
+             rpassword[--rpasswordLength] = '\0';
+         }
+      }
      if(key >0 && key != KEY_SPACE){
          if(inputFieldArray[0].active && usernameLength < MAX_INPUT_CHAR_UP){
              username[usernameLength]= (char)key;
@@ -198,10 +213,21 @@ void on_update() override{
           GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3 + i * 10,
           GetScreenHeight() / 2 - ELEMENT_SPACING,
           DEFAULT_FONT_SIZE,
-          BLACK);
+          BLACK
+          );
   
   }
 
+  for (int i = 0; i < rpasswordLength; i++) {
+      DrawText(
+          "*", 
+          GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3 + i * 10,
+          GetScreenHeight() / 2,
+          DEFAULT_FONT_SIZE,
+          BLACK
+          );
+  
+  }
 
 
 
@@ -237,9 +263,9 @@ void drawButton(Rectangle recButton,string text="Button",Color color=LIGHTGRAY,i
 }
       private:
 
-     char* username=(char*)malloc(sizeof(char)*MAX_INPUT_CHAR_UP);
-     char* password=(char*)malloc(sizeof(char)*MAX_INPUT_CHAR_UP);
-     char* rpassword=(char*)malloc(sizeof(char)*MAX_INPUT_CHAR_UP);
+     char* username=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
+     char* password=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
+     char* rpassword=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
      int usernameLength;
      int passwordLength;
      int rpasswordLength;
