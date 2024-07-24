@@ -2,16 +2,16 @@
 #include "./register_example.hpp"
 #include <string>
 #include "./login_example.hpp"
-int init_width = GetScreenWidth();
-int init_height = GetScreenHeight();
 
 int main(){
   SceneManager scenemanager;
   RegistrationPage registerpage(&scenemanager);
-  LoginScene login(&scenemanager); 
+  LoginScene login(&scenemanager);
+ //CGamemode cgamemode(&scenemanager);
   scenemanager.add("registerpage",&registerpage);
- scenemanager.add("login",&login);
- 
+  scenemanager.add("login",&login);
+  //scenemanager.add("cgamemode",&cgamemode);
+
   InitWindow(1440, 720, "TypeOnMe");
   
   SetTargetFPS(200);

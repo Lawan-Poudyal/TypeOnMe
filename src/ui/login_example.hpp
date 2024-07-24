@@ -1,9 +1,10 @@
 #pragma once
+#include<cstring>
 #include "./login_example.hpp"
 #include "./register_example.hpp"
 #include"../db/database.hpp"
 
-#define MAX_INPUT_CHAR_UP 10
+#define MAX_INPUT_CHAR_UP 18
 #define MARGIN 20
 #define ELEMENT_SPACING 40
 #define INPUT_BOX_WIDTH 200
@@ -35,8 +36,8 @@ public:
         db.query_data("", 1);
         this->scenemanager = scenemanager;
         mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
-        loginButton = {screenWidth / 2 - 110, screenHeight / 2, 120, 45};
-        guestButton = {screenWidth / 2 + 20, screenHeight / 2, 120, 45};
+        Rectangle loginButton;
+        Rectangle guestButton;  
     }
 
     void on_entry() override{
@@ -46,12 +47,12 @@ public:
       GetScreenHeight() / 2 - 150,
       450,
       300};
-    Rectangle loginButton = { 
+    loginButton = { 
       GetScreenWidth() / 2 - BUTTON_WIDTH,
       GetScreenHeight() / 2 + ELEMENT_SPACING,
       120,
       45 };
-    Rectangle guestButton = { GetScreenWidth() / 2 + MARGIN ,
+    guestButton = { GetScreenWidth() / 2 + MARGIN ,
       GetScreenHeight() / 2 + ELEMENT_SPACING ,
       120,
       45 }; 
@@ -89,17 +90,23 @@ public:
                }
 
            
-           if (IsButtonClicked(loginButton)) {
+            std::string strp(password);
+            std::string stru(username);
+           
+            if (IsButtonClicked(loginButton) && checkLoginInfo()){ 
+              if(db.checkCredentials(stru,strp)) {
                TraceLog(LOG_INFO, "Login button clicked. \n Username:%s\n Password:%s", username, password);
-               //currentState = CHOOSEMODE;
-               //DrawGamePage(CHOOSEMODE);
+           }
+            }
+           else if(IsButtonClicked(loginButton)){
 
+                drawTempText=true;        
+                dt=GetFrameTime();
            }
 
            if (IsButtonClicked(guestButton)) {
                TraceLog(LOG_INFO, "Signed as Guest.");
-               //currentState = CHOOSEMODE;
-               //DrawGamePage(CHOOSEMODE);
+               //scenemanager->switch_to("cGamemode");
            }
     }
 
@@ -158,10 +165,21 @@ public:
                     GetScreenHeight() / 2 - ELEMENT_SPACING,
                     DEFAULT_FONT_SIZE,
                     BLACK);
+            
             }
+
+            if(drawTempText){
+                renderTempText(
+                "Please type username and password!",
+                GetScreenWidth() / 2,
+                GetScreenHeight()/ 2  - ELEMENT_SPACING*2,
+                15,BLACK); 
+            }
+
             //DrawText(password, GetScreenWidth()/2 - 210 + 20 + 100 + 20 , GetScreenHeight()/2 + 20 - 150 + 20 +20, 20, BLACK );
         
-            if (typingPassword) DrawRectangleLines(
+            if (typingPassword) 
+              DrawRectangleLines(
                 GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
                 GetScreenHeight() / 2 - ELEMENT_SPACING, INPUT_BOX_WIDTH, INPUT_BOX_HEIGHT, RED);
             else DrawRectangleLines(GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3, GetScreenHeight() / 2 - ELEMENT_SPACING, INPUT_BOX_WIDTH, INPUT_BOX_HEIGHT, LIGHTGRAY);        
@@ -187,12 +205,25 @@ public:
            // DrawRectangleRoundedLines(guestButton, 1, 6 , BLACK);
           EndDrawing();
     }
-    
-
+    bool checkLoginInfo(){
+      return(strlen(username) && strlen(password));
+    } 
+    void renderTempText(string tempText,int posX,int posY,int fontSize,Color color){
+          //GetFrameTime()
+            DrawText(tempText.c_str(),posX,posY,fontSize,color);
+            dt+=GetFrameTime(); 
+          if(dt>3){
+              
+            return;
+          }
+    }
     void on_exit() override {
       return;
     }
-  private:
+
+private:
     SceneManager* scenemanager;
+    bool drawTempText =false;
+    int dt;  
 };
 
