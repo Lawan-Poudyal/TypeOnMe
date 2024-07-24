@@ -4,7 +4,7 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17
 
 # Source files
-SOURCE_FILES = login.cpp db/database.cpp
+SOURCE_FILES = ui/login.cpp db/database.cpp
 
 # Include directories (assuming libraries are installed in standard locations)
 RAYLIB_DIR = /usr/local/lib/raylib
