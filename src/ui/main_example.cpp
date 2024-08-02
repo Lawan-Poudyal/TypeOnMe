@@ -15,13 +15,13 @@ int main(){
   InitWindow(1440, 720, "TypeOnMe");
   
   SetTargetFPS(200);
-  scenemanager.switch_to("login");
+  scenemanager.switch_to("registerpage");
   
   while(!WindowShouldClose()){
     BeginDrawing();
     scenemanager.update();
     scenemanager.poll_event();
   }
-
+  scenemanager.quit();
   return 0;
 }

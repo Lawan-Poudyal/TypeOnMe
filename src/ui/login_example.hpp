@@ -28,7 +28,6 @@ public:
     Rectangle mainRec;
     Rectangle loginButton;
     Rectangle guestButton;
-    Database db;
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
@@ -40,8 +39,8 @@ public:
         Rectangle guestButton;  
     }
 
-    void on_entry() override{
-    
+ void on_entry() override{
+    Database db("credentials.db");
     Rectangle mainRec = {
       GetScreenWidth() / 2 -210,
       GetScreenHeight() / 2 - 150,
@@ -94,7 +93,7 @@ public:
             std::string stru(username);
            
             if (IsButtonClicked(loginButton) && checkLoginInfo()){ 
-              if(db.checkCredentials(stru,strp)) {
+              if(db.checkCredentialsLogin(stru,strp)) {
                TraceLog(LOG_INFO, "Login button clicked. \n Username:%s\n Password:%s", username, password);
            }
             }
@@ -218,6 +217,7 @@ public:
           }
     }
     void on_exit() override {
+      db.closeDB();
       return;
     }
 
@@ -225,5 +225,6 @@ private:
     SceneManager* scenemanager;
     bool drawTempText =false;
     int dt;  
+    Database db;
 };
 

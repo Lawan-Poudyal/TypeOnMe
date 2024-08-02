@@ -5,10 +5,11 @@
 #include "../scene_manager/scene_manager.hpp"
 #include "./login_example.hpp"
 #include "./register_example.hpp"
+#include "../db/database.hpp"
 #include<cstdlib>
 #include<cstring>
 
-#define MAX_INPUT_CHAR_UP 10
+#define MAX_INPUT_CHAR_UP 11
 #define MARGIN 20
 #define ELEMENT_SPACING 40
 #define INPUT_BOX_WIDTH 200
@@ -22,8 +23,10 @@
 class RegistrationPage : public Scene {
 public:  
  SceneManager* scenemanager;
- RegistrationPage(SceneManager* scenemanager){
-    (this->scenemanager) = scenemanager;
+ 
+ RegistrationPage(SceneManager* scenemanager):db("credentials.db") ,scenemanager(nullptr){
+     db.query_data("", 1);
+     (this->scenemanager) = scenemanager;
      memset(username,0,sizeof(char)*MAX_INPUT_CHAR_UP);
      memset(password,0,sizeof(char)*MAX_INPUT_CHAR_UP);
      memset(rpassword,0,sizeof(char)*MAX_INPUT_CHAR_UP);
@@ -37,9 +40,11 @@ public:
     delete rpassword;
  }
  
- void on_entry() override {
-   
-   inputFieldArray[0] = {
+ void on_entry() override{
+
+    Database db("credentials.db");
+     
+    inputFieldArray[0] = {
      .name="username",
      .posX=GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN * 3, 
      .posY=GetScreenHeight()/ 2 -ELEMENT_SPACING*2,
@@ -81,6 +86,7 @@ public:
  }
 
 void on_exit() override{
+  db.closeDB(); 
   return;
 }
 
@@ -142,12 +148,37 @@ else{
 }
 }
 else{
-}
+  }
+      }
 }
 
 
+if(IsButtonClicked(registerButton)){
+  if(checkLoginInfo()){
+    if(db.checkCredentialsRegister(string(username),string(password))){ 
+      db.AddEntry(string(username),string(password)); 
+        std::cout << "Registered user successfully!" << endl;
+      }
+    }
+  else{
+    std::cout << "Passwords Don't Match!"<<endl; 
+    std::cout << password <<"|" <<  rpassword<<endl; 
+  }
+  }
 }
+
+bool checkLoginInfo(){
+  if(!strcmp(rpassword,password)){   
+    return(rpasswordLength && usernameLength && passwordLength);
+  }
+  else{
+    return false;
+  }
 }
+
+bool IsButtonClicked(Rectangle button) {
+    return (CheckCollisionPointRec(GetMousePosition(), button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON));
+    }
 
 
 void on_update() override{
@@ -231,17 +262,6 @@ void on_update() override{
 
 
 
-  if(username){
-
-  }
-
-  if(password){
-
-  }
-
-  if(password){
-
-  }
   EndDrawing();
 
   return;
@@ -272,6 +292,7 @@ void drawButton(Rectangle recButton,string text="Button",Color color=LIGHTGRAY,i
      int init_width;
      int init_height;
      int highlightButtonNum=1;
+     Database db;
      typedef struct textfields{
         string name;
         int posX;
