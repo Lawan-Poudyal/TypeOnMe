@@ -33,7 +33,7 @@ const float ANIMATION_DURATION = 0.3f; // Animation duration in seconds
 
 int test_duration = 30; // Default duration
 const int NUM_TIME_BUTTONS = 4;
-const char* time_options[] = {"60s", "45s", "30s","15s"};
+const char* time_options[] = {"60s", "45s", "30s", "15s"};
 
 bool game_over = false;
 
