@@ -3,6 +3,7 @@
 #include "./login_example.hpp"
 #include "./register_example.hpp"
 #include"../db/database.hpp"
+#include "./graph.hpp"
 
 #define MAX_INPUT_CHAR_UP 18
 #define MARGIN 20
@@ -17,6 +18,7 @@ using namespace std;
 
 class LoginScene : public Scene {
 public:
+    Graph testGraph; 
     char username[MAX_INPUT_CHAR_UP + 1] = "\0";
     char password[MAX_INPUT_CHAR_UP + 1] = "\0";
 
@@ -41,6 +43,18 @@ public:
 
  void on_entry() override{
     Database db("credentials.db");
+    
+    Rectangle testRec = {
+      GetScreenWidth() / 2 -450/2,
+      GetScreenHeight()-300,
+      450,
+      300
+    };
+    tuple<int,int> testTuple = {10,100};
+    vector<tuple<int,int>> pointPosition = {testTuple};
+    pointPosition.push_back(tuple<int,int>{30,50});
+    testGraph.Init(pointPosition,testRec);
+    
     Rectangle mainRec = {
       GetScreenWidth() / 2 -210,
       GetScreenHeight() / 2 - 150,
@@ -115,6 +129,7 @@ public:
     void on_update() override {
 
             ClearBackground(RAYWHITE); 
+            
             
             DrawRectangleRounded(mainRec, 0.3, 0, RAYWHITE); 
 
@@ -202,6 +217,7 @@ public:
                 DEFAULT_FONT_SIZE,
                 BLACK);
            // DrawRectangleRoundedLines(guestButton, 1, 6 , BLACK);
+           testGraph.Draw();
           EndDrawing();
     }
     bool checkLoginInfo(){
