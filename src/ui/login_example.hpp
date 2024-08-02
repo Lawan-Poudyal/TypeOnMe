@@ -52,8 +52,8 @@ public:
     };
     tuple<int,int> testTuple = {10,100};
     vector<tuple<int,int>> pointPosition = {testTuple};
-    pointPosition.push_back(tuple<int,int>{30,50});
-    testGraph.Init(pointPosition,testRec);
+    pointPosition.push_back(tuple<int,int>{30,75});
+    testGraph.Init(pointPosition,testRec,15);
     
     Rectangle mainRec = {
       GetScreenWidth() / 2 -210,
@@ -130,7 +130,7 @@ public:
 
             ClearBackground(RAYWHITE); 
             
-            
+            testGraph.Draw(); 
             DrawRectangleRounded(mainRec, 0.3, 0, RAYWHITE); 
 
             DrawText(
@@ -217,7 +217,6 @@ public:
                 DEFAULT_FONT_SIZE,
                 BLACK);
            // DrawRectangleRoundedLines(guestButton, 1, 6 , BLACK);
-           testGraph.Draw();
           EndDrawing();
     }
     bool checkLoginInfo(){

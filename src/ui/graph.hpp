@@ -11,7 +11,7 @@ using namespace std;
 
 class Graph{
   public:
-  void Init( vector<tuple<int,int>>pointPosition , Rectangle boxConfiguration){
+  void Init( vector<tuple<int,int>>pointPosition , Rectangle boxConfiguration,int maxTime){
     this->pointPosition = pointPosition;
     this->boxConfiguration = boxConfiguration;
   }
@@ -22,7 +22,11 @@ class Graph{
     //void DrawCircle(int centerX, int centerY, float radius, Color color);                              // Draw a color-filled circle
     DrawRectangle(boxConfiguration.x,boxConfiguration.y,boxConfiguration.width,boxConfiguration.height,GRAY);
     for(tuple<int,int> pointBuf : pointPosition){
-      DrawCircle(boxConfiguration.x + get<0>(pointBuf), boxConfiguration.y + boxConfiguration.height - (static_cast<float>(get<1>(pointBuf)/101.0f) * boxConfiguration.height) ,4, BLUE);                              // Draw a color-filled circle
+      DrawCircle(boxConfiguration.x + static_cast<float>(get<0>(pointBuf)/static_cast<float>(maxTime)) * boxConfiguration.width,
+          boxConfiguration.y + boxConfiguration.height - (static_cast<float>(get<1>(pointBuf)/101.0f) * boxConfiguration.height),
+          4,
+          BLUE
+          );                              // Draw a color-filled circle
     }
   } 
   void Update(){
@@ -32,5 +36,6 @@ class Graph{
   private:
   vector<tuple<int,int>>pointPosition;
   Rectangle boxConfiguration;
+  int maxTime;
 
 };
