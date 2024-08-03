@@ -2,26 +2,29 @@
 #include "./register_example.hpp"
 #include <string>
 #include "./login_example.hpp"
-int init_width = 1440;
-int init_height = 1080;
+#include "./leaderboard.hpp"
 
 int main(){
   SceneManager scenemanager;
   RegistrationPage registerpage(&scenemanager);
-  LoginScene login(&scenemanager); 
+  LoginScene login(&scenemanager);
+  LeaderboardScene leaderboard(&scenemanager);
+ //CGamemode cgamemode(&scenemanager);
   scenemanager.add("registerpage",&registerpage);
- scenemanager.add("login",&login);
- 
-  InitWindow(init_width/2, init_height/2, "TypeOnMe");
+  scenemanager.add("login",&login);
+  scenemanager.add("leaderboard",&leaderboard);
+  //scenemanager.add("cgamemode",&cgamemode);
+
+  InitWindow(1440, 720, "TypeOnMe");
   
   SetTargetFPS(200);
-  scenemanager.switch_to("registerpage");
+  scenemanager.switch_to("leaderboard");
   
   while(!WindowShouldClose()){
     BeginDrawing();
     scenemanager.update();
     scenemanager.poll_event();
   }
-
+  scenemanager.quit();
   return 0;
 }
