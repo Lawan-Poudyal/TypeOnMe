@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <sqlite3.h> 
 #include <string>
+#include <unordered_map>
 using namespace std;
 
 
@@ -16,6 +17,8 @@ class Database{
     bool checkCredentialsLogin(const std::string&,const std::string&);
     bool checkCredentialsRegister(const std::string&,const std::string&);
     bool closeDB();
+    bool InitializeLeaderboard();
+    unordered_map<string,int> getLeaderboard();
   private:
     sqlite3 *m_db;
 

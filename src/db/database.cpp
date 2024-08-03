@@ -1,5 +1,4 @@
 #include "./database.hpp"
-#include "../main.hpp"
 #include <iostream>
 #include <cstring>
 #include <unordered_map>
@@ -134,7 +133,7 @@ bool Database::checkCredentialsRegister(const std::string& usrname, const std::s
 }
 
 unordered_map<string,int> Database::getLeaderboard(){
-
+/*
   const char* sql = "SELECT * FROM leaderboard;";
   sqlite3_stmt* stmt = nullptr;
   unordered_map<string,int> leaderboardMap;
@@ -149,11 +148,11 @@ unordered_map<string,int> Database::getLeaderboard(){
     std::cout << userExists << endl;
     sqlite3_finalize(stmt);
     return leaderboardMap;
-
+*/
 }
 
 bool Database::InitializeLeaderboard(){
-
+/*
     char* zErrMsg = nullptr;
     int rc;
 
@@ -174,7 +173,8 @@ bool Database::InitializeLeaderboard(){
     }
 
     return 0;
-}
+*/
+    }
 
 bool Database::closeDB() {
     if(sqlite3_close(m_db) == SQLITE_OK){
