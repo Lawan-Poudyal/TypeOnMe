@@ -133,6 +133,52 @@ bool Database::checkCredentialsRegister(const std::string& usrname, const std::s
     }
 }
 
+bool Database::getLeaderboard(){
+    const char* sql = "SELECT * FROM leaderboard;";
+    sqlite3_stmt* stmt = nullptr;
+    
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error preparing select statement: " << sqlite3_errmsg(m_db) << std::endl; 
+        return false;
+    }
+
+    rc = sqlite3_step(stmt);
+    bool userExists = (rc == SQLITE_ROW);
+    std::cout << userExists << endl;
+    sqlite3_finalize(stmt);
+
+    if (userExists) {
+        std::cout << "Username already exists." << std::endl;
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool Database::InitializeLeaderboard(){
+
+    char* zErrMsg = nullptr;
+    int rc;
+
+    const char* sql = "CREATE TABLE IF NOT EXISTS leaderboard("
+                      "UID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                      "username TEXT,"
+                      "wpm INTEGER);";
+   
+    
+    rc = sqlite3_exec(m_db, sql, db_callback, 0, &zErrMsg);
+    
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQLITE-ERROR: " << sqlite3_errmsg(m_db) << std::endl;
+        sqlite3_free(zErrMsg);
+        return rc;
+    }
+    else {
+        std::cout << "Database query successful" << std::endl;
+    }
+    return 0;
+}
+
 bool Database::closeDB() {
     if(sqlite3_close(m_db) == SQLITE_OK){
       return true;

@@ -23,7 +23,8 @@ public:
     vector<Vector2> points;
     int screenWidth;
     int screenHeight;
-
+    int i;
+    
     LeaderboardScene(SceneManager* scenemanager) : scenemanager(nullptr) {
         this->scenemanager = scenemanager;
         screenWidth = GetScreenWidth();
@@ -38,6 +39,7 @@ public:
         wpmBox = { 50, 220, BOX_WIDTH, BOX_HEIGHT };
         leaderboardBox = { 400, 220, BOX_WIDTH, BOX_HEIGHT };
         points = { {70, 180}, {150, 120}, {230, 100}, {310, 140}, {390, 130}, {470, 110}, {550, 140}, {630, 120} };
+        int i=0;
     }
 
     void on_event() override {
@@ -73,9 +75,11 @@ public:
         // Draw the leaderboard box
         DrawRectangle(leaderboardBox.x, leaderboardBox.y, leaderboardBox.width, leaderboardBox.height, DARKGRAY);
         DrawText("Leaderboard", leaderboardBox.x + 20, leaderboardBox.y + 20, DEFAULT_FONT_SIZE, WHITE);
-        DrawText("a) Nanish 89", leaderboardBox.x + 20, leaderboardBox.y + 60, DEFAULT_FONT_SIZE, WHITE);
-        DrawText("b) Shritarsh lol", leaderboardBox.x + 20, leaderboardBox.y + 100, DEFAULT_FONT_SIZE, WHITE);
 
+        for(vector<string,int>usernameAndWpm : dbLeaderboard){
+          DrawText(string(usernameAndWpm[0])+to_string(usernameAndWpm[1]), leaderboardBox.x + 20, leaderboardBox.y + 60 + 40*i, DEFAULT_FONT_SIZE, WHITE);
+          i++;
+        }
         EndDrawing();
     }
 
@@ -85,5 +89,6 @@ public:
 
 private:
     SceneManager* scenemanager;
+    std::unordered_map<string,int> dbLeaderboard;
 };
 
