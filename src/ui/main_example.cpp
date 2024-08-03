@@ -2,23 +2,25 @@
 #include "./register_example.hpp"
 #include <string>
 #include "./login_example.hpp"
-#include "./leaderboard.hpp"
-
+//#include "./leaderboard.hpp"
+#include "./gamemode_test.hpp"
 int main(){
   SceneManager scenemanager;
   RegistrationPage registerpage(&scenemanager);
   LoginScene login(&scenemanager);
-  LeaderboardScene leaderboard(&scenemanager);
+//  LeaderboardScene leaderboard(&scenemanager);
+  TypingTestScene gamemode;
  //CGamemode cgamemode(&scenemanager);
   scenemanager.add("registerpage",&registerpage);
   scenemanager.add("login",&login);
-  scenemanager.add("leaderboard",&leaderboard);
+ // scenemanager.add("leaderboard",&leaderboard);
+  scenemanager.add("gamemode",&gamemode);
   //scenemanager.add("cgamemode",&cgamemode);
 
   InitWindow(1440, 720, "TypeOnMe");
   
   SetTargetFPS(200);
-  scenemanager.switch_to("leaderboard");
+  scenemanager.switch_to("gamemode");
   
   while(!WindowShouldClose()){
     BeginDrawing();
