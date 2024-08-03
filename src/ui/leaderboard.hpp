@@ -88,6 +88,7 @@ public:
     }
 
 private:
+
     SceneManager* scenemanager;
     std::unordered_map<string,int> dbLeaderboard;
 };

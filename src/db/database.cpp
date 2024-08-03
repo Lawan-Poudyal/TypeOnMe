@@ -2,7 +2,7 @@
 #include "../main.hpp"
 #include <iostream>
 #include <cstring>
-
+#include <unordered_map>
 Database::Database(const std::string& db) {
     int rc = sqlite3_open(db.c_str(), &m_db);
     if (rc) {
@@ -133,10 +133,12 @@ bool Database::checkCredentialsRegister(const std::string& usrname, const std::s
     }
 }
 
-bool Database::getLeaderboard(){
-    const char* sql = "SELECT * FROM leaderboard;";
-    sqlite3_stmt* stmt = nullptr;
-    
+unordered_map<string,int> Database::getLeaderboard(){
+
+  const char* sql = "SELECT * FROM leaderboard;";
+  sqlite3_stmt* stmt = nullptr;
+  unordered_map<string,int> leaderboardMap;
+
     if (rc != SQLITE_OK) {
         std::cerr << "Error preparing select statement: " << sqlite3_errmsg(m_db) << std::endl; 
         return false;
@@ -146,13 +148,8 @@ bool Database::getLeaderboard(){
     bool userExists = (rc == SQLITE_ROW);
     std::cout << userExists << endl;
     sqlite3_finalize(stmt);
+    return leaderboardMap;
 
-    if (userExists) {
-        std::cout << "Username already exists." << std::endl;
-        return false;
-    } else {
-        return true;
-    }
 }
 
 bool Database::InitializeLeaderboard(){
@@ -161,7 +158,6 @@ bool Database::InitializeLeaderboard(){
     int rc;
 
     const char* sql = "CREATE TABLE IF NOT EXISTS leaderboard("
-                      "UID INTEGER PRIMARY KEY AUTOINCREMENT,"
                       "username TEXT,"
                       "wpm INTEGER);";
    
@@ -176,6 +172,7 @@ bool Database::InitializeLeaderboard(){
     else {
         std::cout << "Database query successful" << std::endl;
     }
+
     return 0;
 }
 
