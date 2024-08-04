@@ -92,7 +92,7 @@ void on_exit() override{
 
 void on_event(){
   if(IsKeyPressed(KEY_ENTER)){
-  scenemanager->switch_to("leaderboard");
+  scenemanager->switch_to("login");
   }
 
      int key = GetCharPressed();

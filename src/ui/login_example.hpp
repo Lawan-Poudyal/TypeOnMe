@@ -44,16 +44,6 @@ public:
  void on_entry() override{
     Database db("credentials.db");
     
-    Rectangle testRec = {
-      GetScreenWidth() / 2 -450/2,
-      GetScreenHeight()-300,
-      450,
-      300
-    };
-    tuple<int,int> testTuple = {10,100};
-    vector<tuple<int,int>> pointPosition = {testTuple};
-    pointPosition.push_back(tuple<int,int>{30,75});
-    testGraph.Init(pointPosition,testRec,15);
     
     Rectangle mainRec = {
       GetScreenWidth() / 2 -210,
