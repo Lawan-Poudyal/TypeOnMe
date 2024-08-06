@@ -612,7 +612,23 @@ public:
 
     void on_exit() override{
       game_over=false;  
+      timer_initialized=false;
+      remaining_time=DrawTime();
+      word_queue.clear();
+      typing_started=!typing_started;
+      for (int i = 0; i < 3; ++i) {
+          word_queue.push_back(word_generator.getNextWord());
+      }
+      prev_word = "";
+      memset(word.get(), 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
+      word[0] = '\0';
+      letter_count = 0;
+      total_characters_typed = 0;
+      typedWords.clear();
+      all_displayed_words.clear();
+      
       ClearBackground(BLACK);
+    
     }
 
     bool is_mouse_over_button(Button button){
