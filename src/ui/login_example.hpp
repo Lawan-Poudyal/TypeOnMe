@@ -34,9 +34,11 @@ public:
     Rectangle loginButton;
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
+    Session* session; 
 
-    LoginScene(SceneManager* scenemanager) : db("credentials.db"), scenemanager(nullptr){
+    LoginScene(SceneManager* scenemanager,Session* session) : db("credentials.db"), scenemanager(nullptr),session(session){
         db.query_data("", 1);
+        db.InitializeLeaderboard();
         this->scenemanager = scenemanager;
         mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
         Rectangle loginButton;
@@ -95,7 +97,9 @@ public:
            
             if (IsButtonClicked(loginButton) && checkLoginInfo()){ 
               if(db.checkCredentialsLogin(stru,strp)) {
-                  strcpy(sessionUsername,username);
+
+                  session->switchStatus();
+                  session->setSessionUsername(string(username));
                   scenemanager->switch_to("cgamemode");
               }
             }

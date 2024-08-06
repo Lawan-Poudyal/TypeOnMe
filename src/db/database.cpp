@@ -1,7 +1,7 @@
 #include "./database.hpp"
 #include <iostream>
 #include <cstring>
-#include <unordered_map>
+#include <vector>
 Database::Database(const std::string& db) {
     int rc = sqlite3_open(db.c_str(), &m_db);
     if (rc) {
@@ -132,33 +132,72 @@ bool Database::checkCredentialsRegister(const std::string& usrname, const std::s
     }
 }
 
-unordered_map<string,int> Database::getLeaderboard(){
-/*
-  const char* sql = "SELECT * FROM leaderboard;";
-  sqlite3_stmt* stmt = nullptr;
-  unordered_map<string,int> leaderboardMap;
-
-    if (rc != SQLITE_OK) {
-        std::cerr << "Error preparing select statement: " << sqlite3_errmsg(m_db) << std::endl; 
+bool Database::insertLeaderboard(std::pair<string,int> values){
+      const char* sql = "INSERT INTO leaderboard (USERNAME, WPM) VALUES (?, ?)";
+      sqlite3_stmt* stmt = nullptr;
+      int result = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+      if (result != SQLITE_OK) {
+          std::cerr << "Error preparing insert statement: " << sqlite3_errmsg(m_db) << std::endl;
+          return false;
+      }
+    if (sqlite3_bind_text(stmt, 1, values.first.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK ||
+        sqlite3_bind_int(stmt, 2, values.second) != SQLITE_OK) {
+        std::cerr << "Error binding parameters: " << sqlite3_errmsg(m_db) << std::endl;
+        sqlite3_finalize(stmt);
         return false;
     }
 
-    rc = sqlite3_step(stmt);
-    bool userExists = (rc == SQLITE_ROW);
-    std::cout << userExists << endl;
+    result = sqlite3_step(stmt);
+    if (result != SQLITE_DONE) {
+        std::cerr << "Error inserting data: " << sqlite3_errmsg(m_db) << std::endl;
+        sqlite3_finalize(stmt);
+        return false;
+    }
+
     sqlite3_finalize(stmt);
-    return leaderboardMap;
-*/
+    return true;
+
+      }
+
+
+
+std::vector<std::pair<std::string, int>> Database::getLeaderboard() {
+
+    const char* sql = "SELECT USERNAME,WPM FROM leaderboard;"; // Combine into one query
+    sqlite3_stmt* stmt = nullptr; // Use one statement object
+    std::vector<std::pair<std::string, int>> leaderboardMap;
+    
+    int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Error preparing select statement: " << sqlite3_errmsg(m_db) << std::endl; 
+        exit(-1);
+    }
+
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        const unsigned char* username = sqlite3_column_text(stmt, 0); // Column 0 for username
+        int wpm = sqlite3_column_int(stmt, 1); // Column 1 for wpm
+        
+        // Convert username to std::string and create a pair
+        std::string userStr(reinterpret_cast<const char*>(username));
+        leaderboardMap.emplace_back(userStr, wpm);
+    }
+
+    if (rc != SQLITE_DONE) {
+        std::cerr << "Error retrieving data: " << sqlite3_errmsg(m_db) << std::endl;
+    }
+
+    sqlite3_finalize(stmt);
+    return leaderboardMap; // Return the filled vector
 }
 
 bool Database::InitializeLeaderboard(){
-/*
+
     char* zErrMsg = nullptr;
     int rc;
 
     const char* sql = "CREATE TABLE IF NOT EXISTS leaderboard("
-                      "username TEXT,"
-                      "wpm INTEGER);";
+                      "USERNAME TEXT,"
+                      "WPM INTEGER);";
    
     
     rc = sqlite3_exec(m_db, sql, db_callback, 0, &zErrMsg);
@@ -173,7 +212,7 @@ bool Database::InitializeLeaderboard(){
     }
 
     return 0;
-*/
+
     }
 
 bool Database::closeDB() {

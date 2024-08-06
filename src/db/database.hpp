@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <sqlite3.h> 
 #include <string>
-#include <unordered_map>
+#include <vector>
 using namespace std;
 
 
@@ -18,7 +18,10 @@ class Database{
     bool checkCredentialsRegister(const std::string&,const std::string&);
     bool closeDB();
     bool InitializeLeaderboard();
-    unordered_map<string,int> getLeaderboard();
+    std::vector<std::pair<std::string, int>> getLeaderboard();
+    bool insertLeaderboard(std::pair<string,int> values);
+  
+
   private:
     sqlite3 *m_db;
 

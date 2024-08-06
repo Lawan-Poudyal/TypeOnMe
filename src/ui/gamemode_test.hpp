@@ -11,6 +11,7 @@
 #include "./../scene_manager/scene_manager.hpp"
 #include "../game_logic/accuracy.hpp"
 #include "../globals.hpp"
+#include "../db/database.hpp"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ int  init_height = 760;
 int CENTER_X = init_width / 2;
 int CENTER_Y = init_height / 2;
 int global_seed = time(NULL);
-vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn", "vase", "windmill", "x-ray", "yarn"};
+vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn",  "vase", "windmill", "x-ray", "yarn"};
 vector<string> sentences = {
     "Overcoming betrayal is a profound and challenging journey that requires resilience and self-compassion. It involves acknowledging the hurt and allowing oneself to grieve the loss of trust. Healing begins with introspection, understanding that the betrayal reflects more on the betrayer's character than on one's worth."
 };
@@ -112,7 +113,7 @@ public:
 
 class CGamemode : public Scene{
   private:
-
+    Database db;
     int remaining_time;
     string prev_word;
     bool sentence_mode;
@@ -142,7 +143,7 @@ class CGamemode : public Scene{
 
     float animation_progress;
     float ANIMATION_DURATION; // Animation duration in seconds
-
+    Session* session; 
     int test_duration; // Default duration
     int NUM_TIME_BUTTONS;
     char time_options[4][4];
@@ -163,8 +164,11 @@ class CGamemode : public Scene{
     Button time_buttons[4];
     Button button_0 ; //the button 
     Button button_1;  //the button
+    Button addToLeaderboard;
 public:
-   CGamemode(SceneManager* scenemanager) :
+
+
+   CGamemode(SceneManager* scenemanager,Session* session) :
 
     button_width(100),
     button_height(40),
@@ -182,9 +186,11 @@ public:
         game_over(false),
      init_width(1440),
      init_height(760),
-     scenemanager(scenemanager)
+     scenemanager(scenemanager),
+     session(session),
+     db("credentials.db")
      {
-
+    
         memcpy(time_options, (char[4][4]){"60s", "45s", "30s", "15s"}, sizeof(time_options));
         sentence_mode = (false);
         current_sentence = ("");
@@ -204,6 +210,7 @@ public:
     
     Button button_0 = {0}; //the button
     Button button_1 = {0}; //the button
+    Button addToLeaderboard = {0};
     for (int i = 0; i < 3; ++i) {
         word_queue.push_back(word_generator.getNextWord());
       }
@@ -215,6 +222,7 @@ public:
 
     init_button(&button_0, (Rectangle){0, 15, 200, 30}, RED);
     init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
+    init_button(&addToLeaderboard,(Rectangle){init_width/2-50, init_height/2+100,200+100,30},RED); 
 
     for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
         Rectangle rect = {
@@ -411,6 +419,17 @@ public:
         if(game_over && IsKeyPressed(KEY_ENTER)){
               on_exit();
         }
+        if(game_over && IsButtonClicked(addToLeaderboard.rect)){
+          std::pair <string,int> pairBuf(session->getUsername(),calculate_wpm());
+          std::cout << "USERNAME: " << session->getUsername() << "WPM: "<< calculate_wpm() << endl;
+          db.insertLeaderboard(pairBuf);
+        }
+
+    }
+
+
+    bool IsButtonClicked(Rectangle button) {
+        return (CheckCollisionPointRec(GetMousePosition(), button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON));
     }
     
     void on_update() override{
@@ -422,7 +441,7 @@ public:
         int box_width = 740;
         int box_height = 150;
     
-        DrawText(sessionUsername,init_width/2,20, 30, WHITE);
+        DrawText(session->getUsername().c_str(),init_width/2,20, 30, WHITE);
 
         if(!game_over){
         // Handle animation
@@ -591,10 +610,11 @@ public:
         ClearBackground(BLACK);
         float wpm = calculate_wpm();
         float acc = accuracy(typedWords, all_displayed_words);
-        std::cout << "ACCURACY: " << accuracy << endl;
         DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
         DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
-        
+        DrawRectangleRec(addToLeaderboard.rect,addToLeaderboard.color);
+        DrawText("Add To Leaderboard", addToLeaderboard.rect.x + addToLeaderboard.rect.width/2 - MeasureText("Add To Leaderboard", 10) - 10, addToLeaderboard.rect.y + addToLeaderboard.rect.height/2 - 20 / 2, 20, WHITE);
+
      }
 
         float current_wpm = calculate_wpm();
@@ -608,7 +628,7 @@ public:
       timer_initialized=false;
       remaining_time=DrawTime();
       word_queue.clear();
-      typing_started=!typing_started;
+      typing_started=false;
       for (int i = 0; i < 3; ++i) {
           word_queue.push_back(word_generator.getNextWord());
       }
