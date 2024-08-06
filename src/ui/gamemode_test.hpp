@@ -626,6 +626,7 @@ public:
     void on_exit() override{
       game_over=false;  
       timer_initialized=false;
+      timer_start=0;
       remaining_time=DrawTime();
       word_queue.clear();
       typing_started=false;
@@ -639,8 +640,6 @@ public:
       total_characters_typed = 0;
       typedWords.clear();
       all_displayed_words.clear();
-      
-      ClearBackground(BLACK);
     
     }
 
