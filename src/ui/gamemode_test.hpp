@@ -1,4 +1,3 @@
-#pragma once
 #include "raylib.h"
 #include <vector>
 #include <string>
@@ -8,18 +7,24 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>
-#include "../scene_manager/scene_manager.hpp"
+#include<memory>
+#include "./../scene_manager/scene_manager.hpp"
 
 using namespace std;
 
 #define MAX_INPUT_CHAR 500
 
 
-int  init_width = 1500;
-int  init_height = 768;
+int  init_width = 1440;
+int  init_height = 760;
 int CENTER_X = init_width / 2;
 int CENTER_Y = init_height / 2;
 int global_seed = time(NULL);
+vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn", "vase", "windmill", "x-ray", "yarn"};
+vector<string> sentences = {
+    "Overcoming betrayal is a profound and challenging journey that requires resilience and self-compassion. It involves acknowledging the hurt and allowing oneself to grieve the loss of trust. Healing begins with introspection, understanding that the betrayal reflects more on the betrayer's character than on one's worth."
+};
+
 
 class Cursor {
 public:
@@ -41,8 +46,11 @@ private:
     int seed;
 
 public:
+    SentenceGenerator(){}
     SentenceGenerator( vector<string>& sent, int s) : sentences(sent), seed(s) {
-        srand(seed);
+      std::cout << "SentenceGenerator constructor, sentences size: " << sentences.size() << std::endl;
+    
+      srand(seed);
         resetUnusedSentences();
     }
 
@@ -57,6 +65,8 @@ public:
         }
         string sentence = unused_sentences.back();
         unused_sentences.pop_back();
+        
+    std::cout << "Getting next sentence, unused_sentences size: " << unused_sentences.size() << std::endl;
         return sentence;   
     }
 };
@@ -68,12 +78,16 @@ private:
     int seed;
 
 public:
+    WordGenerator(){}
     WordGenerator( vector<string>& dict, int s) : dictionary(dict), seed(s) {
-        srand(seed);
+      
+    std::cout << "WordGenerator constructor, dictionary size: " << dictionary.size() << std::endl;
+      srand(seed);
         resetUnusedWords();
     }
 
     void resetUnusedWords(){
+ 
         unused_words = dictionary;
         random_shuffle(unused_words.begin(), unused_words.end());
     }
@@ -84,6 +98,9 @@ public:
         }
         string word = unused_words.back();
         unused_words.pop_back();
+
+    std::cout << "Getting next word, unused_words size: " << unused_words.size() << std::endl;
+  
         return word;   
     }
 };
@@ -98,9 +115,6 @@ class CGamemode : public Scene{
     bool animating;
     int init_width;
     int init_height;
-    int CENTER_X;
-    int CENTER_Y ;
-    int global_seed;
     SentenceGenerator sentence_generator;
     double typing_start_time;
     double typing_end_time;
@@ -109,12 +123,11 @@ class CGamemode : public Scene{
     WordGenerator word_generator;
     deque<string> word_queue;
     
-    vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn", "vase", "windmill", "x-ray", "yarn"};
-    vector<string> sentences = {
-    "Overcoming betrayal is a profound and challenging journey that requires resilience and self-compassion. It involves acknowledging the hurt and allowing oneself to grieve the loss of trust. Healing begins with introspection, understanding that the betrayal reflects more on the betrayer's character than on one's worth."
-    };
+
     string current_sentence;
 
+  
+    
     vector<string> typedWords;
     vector<string> all_displayed_words;
 
@@ -123,11 +136,12 @@ class CGamemode : public Scene{
 
     int test_duration; // Default duration
     int NUM_TIME_BUTTONS;
-    char* time_options[4];
+    char time_options[4][4];
 
 
 
-    char* word;
+    std::unique_ptr<char[]> word;
+
     int letter_count; 
     float cursorContent;
     bool drawCursor;
@@ -138,51 +152,52 @@ class CGamemode : public Scene{
         Rectangle rect;
         Color color;
     } Button;
-
-    
-    Button time_buttons[100];
-    Button button_0 ; //the button
+    Button time_buttons[4];
+    Button button_0 ; //the button 
     Button button_1;  //the button
 public:
-   CGamemode()
-:       
-        animating(false),
-        init_width(1500),
-        init_height(768),
-        CENTER_X(init_width / 2),
-        CENTER_Y(init_height / 2),
-        global_seed(time(NULL)),
-        typing_start_time(0.0),
-        typing_end_time(0.0),
-        typing_started(false),
-        total_characters_typed(0),
-        animation_progress(1.0f),
-        ANIMATION_DURATION(0.3f),
-        test_duration(30),
-        NUM_TIME_BUTTONS(4),
-        game_over(false),
-        time_options({"60s", "45s", "30s", "15s"}),
-        sentence_mode(false),
-        current_sentence(""),
-        sentence_generator(sentences, global_seed),
-        word_generator(dictionary, global_seed),
-        prev_word("")
+   CGamemode() 
         {
 
+        animating = (false);
+        typing_start_time = (0.0);
+        typing_end_time = (0.0);
+        typing_started = (false);
+        total_characters_typed = (0);
+        animation_progress = (1.0f);
+        ANIMATION_DURATION = (0.3f);
+        test_duration = (30);
+        NUM_TIME_BUTTONS =(4);
+        game_over = (false);
+        memcpy(time_options, (char[4][4]){"60s", "45s", "30s", "15s"}, sizeof(time_options));
+        sentence_mode = (false);
+        current_sentence = ("");
+        prev_word = ("");
+        sentence_generator = SentenceGenerator(sentences, global_seed);
+        word_generator = WordGenerator(dictionary, global_seed);
 
     int letter_count;
     float cursorContent;
     bool drawCursor;
-
     vector<string> typedWords;
     vector<string> all_displayed_words;
 
-
+    word = std::make_unique<char[]>(MAX_INPUT_CHAR + 1);
+    word[0] = '\0';
+    letter_count = 0;
+    
+    std::cout << "Sentences size: " << sentences.size() << std::endl;
+    std::cout << "Dictionary size: " << dictionary.size() << std::endl;
+    
     Button button_0 = {0}; //the button
     Button button_1 = {0}; //the button
-    Button time_buttons[NUM_TIME_BUTTONS];
+    for (int i = 0; i < 3; ++i) {
+        word_queue.push_back(word_generator.getNextWord());
+    }
    
-   } 
+    init_button(&button_0, (Rectangle){0, 15, 200, 30}, RED);
+    init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
+        } 
 
    void on_entry() override{
 
@@ -199,26 +214,8 @@ public:
             (float)button_height
         };
         init_button(&time_buttons[i], rect, DARKGRAY);
+        std::cout << "Time buttons initiated!";
     }
-
-
-    char* word = (char*)malloc(sizeof(char) * (MAX_INPUT_CHAR + 1));
-    word[0] = '\0';
-    int letter_count = 0;
-    float cursorContent = 0.0f;
-    bool drawCursor = true;
-
-    InitWindow(init_width, init_height, "TypeOnMe");
-    SetTargetFPS(200);
-
-    init_button(&button_0, (Rectangle){0, 15, 200, 30}, RED);
-    init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
-
-
-    for (int i = 0; i < 3; ++i) {
-        word_queue.push_back(word_generator.getNextWord());
-    }
-
 
 
    }
@@ -260,6 +257,7 @@ public:
             if (seconds < 0) seconds = 0;
         }
 
+        std::cout << "Tried Drawing Time!"<<endl;
         DrawText(TextFormat("Time: %i", seconds), init_width-200, 40, 20, WHITE);
         return seconds;
     }
@@ -308,6 +306,7 @@ public:
 
         EndScissorMode();
 
+        std::cout << "Tried Drawing Text In Bounds!"<<endl;
     }
 
     void DrawSentenceInBounds( string& sentence, int start_x, int start_y, int max_width, int max_height) {
@@ -350,92 +349,29 @@ public:
         }
 
         EndScissorMode();
+
+        std::cout << "Tried Drawing Sentence In Bounds!"<<endl;
     }
 
     void DrawTypedWord( char* word, const char* correct_word, int x, int y, int fontSize) {
         int cursor_x = x;
         size_t word_len = strlen(word);
+
         size_t correct_len = strlen(correct_word);
 
         for (size_t i = 0; i < word_len; i++) {
             Color color = (i < correct_len && word[i] == correct_word[i]) ? RAYWHITE : RED;
             char temp[2] = {word[i], '\0'};
+            cout <<temp << endl;
             DrawText(temp, cursor_x, y, fontSize, color);
             cursor_x += MeasureText(temp, fontSize) + 2;
         }
+
+        std::cout << "Tried Drawing Typed Words!"<<endl;
     }
 
     void on_event() override {
 
-    if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-      on_exit();
-    }
-
-    if (!game_over) {
-        if (!typing_started) {
-            // Handle time button clicks
-            for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
-                if (is_mouse_over_button(time_buttons[i])) {
-                    time_buttons[i].color = GRAY;
-                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                        switch (i) {
-                            case 0: test_duration = 60; break;
-                            case 1: test_duration = 45; break;
-                            case 2: test_duration = 30; break;
-                            case 3: test_duration = 15; break;
-                        }
-                    }
-                } else {
-                    time_buttons[i].color = DARKGRAY;
-                }
-            }
-        }
-
-        // Handle mode selection buttons
-        if (is_mouse_over_button(button_0)) {
-            button_0.color = GRAY;
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
-                sentence_mode = true;
-                current_sentence = sentence_generator.getNextSentence();
-                memset(word, 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
-                letter_count = 0;
-                total_characters_typed = 0;
-                typedWords.clear();
-                all_displayed_words.clear();
-            }
-        } else {
-            button_0.color = RED;
-        }
-
-        if (is_mouse_over_button(button_1)) {
-            button_1.color = GRAY;
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
-                sentence_mode = false;
-                word_queue.clear();
-                for (int i = 0; i < 3; ++i) {
-                    word_queue.push_back(word_generator.getNextWord());
-                }
-                prev_word = "";
-                memset(word, 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
-                letter_count = 0;
-                total_characters_typed = 0;
-                typedWords.clear();
-                all_displayed_words.clear();
-            }
-        } else {
-            button_1.color = RED;
-        }
-
-        if (!typing_started && letter_count > 0) {
-            typing_started = true;
-            typing_start_time = GetTime();
-        }
-
-        if ((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)) {
-            total_characters_typed--;
-            letter_count--;
-            word[letter_count] = '\0';
-        } 
         int key = GetCharPressed();
 
         if (letter_count < MAX_INPUT_CHAR) {
@@ -452,21 +388,37 @@ public:
                     } else {
                         word[letter_count] = '\0';  // Null-terminate the word
                     }
-                        typedWords.push_back(word);
+                      typedWords.push_back(std::string(word.get()));
                         
                         prev_word = word_queue.front();
                         word_queue.pop_front();
                         word_queue.push_back(word_generator.getNextWord());
                         all_displayed_words.push_back(word_queue.back());
                         
-                        memset(word, 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
+                        memset(word.get(), 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
+                        word[0] = '\0';
                         letter_count = 0;
 
                         animating = true;
                         animation_progress = 0.0f;
                 }
-                
-            
+
+
+        if ((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)) {
+            total_characters_typed--;
+            letter_count--;
+            word[letter_count] = '\0';
+        } 
+    }
+    
+    void on_update() override{
+        ClearBackground(BLACK);
+
+        // Draw the text in the box
+        int box_width = 740;
+        int box_height = 150;
+
+
 
         // Handle animation
         if (animating && !sentence_mode) {
@@ -487,15 +439,69 @@ public:
             game_over = true;
             typing_end_time = GetTime();
         }
-      }
-    }
-    
-    void on_update() override{
-        ClearBackground(BLACK);
 
-        // Draw the text in the box
-        int box_width = 740;
-        int box_height = 150;
+
+        if (!typing_started) {
+            // Handle time button clicks
+            for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
+                if (is_mouse_over_button(time_buttons[i])) {
+                    time_buttons[i].color = GRAY;
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                        switch (i) {
+                            case 0: test_duration = 60; break;
+                            case 1: test_duration = 45; break;
+                            case 2: test_duration = 30; break;
+                            case 4: test_duration = 15;break;
+                        }
+                    }
+                } else {
+                    time_buttons[i].color = DARKGRAY;
+                }
+            }
+        }
+
+        // Handle mode selection buttons
+        if (is_mouse_over_button(button_0)) {
+            button_0.color = GRAY;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
+                sentence_mode = true;
+                current_sentence = sentence_generator.getNextSentence();
+                memset(word.get(), 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
+                word[0] = '\0';
+                letter_count = 0;
+                total_characters_typed = 0;
+                typedWords.clear();
+                all_displayed_words.clear();
+            }
+        } else {
+            button_0.color = RED;
+        }
+
+        if (is_mouse_over_button(button_1)) {
+            button_1.color = GRAY;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
+                sentence_mode = false;
+                word_queue.clear();
+                for (int i = 0; i < 3; ++i) {
+                    word_queue.push_back(word_generator.getNextWord());
+                }
+                prev_word = "";
+                memset(word.get(), 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
+                word[0] = '\0';
+                letter_count = 0;
+                total_characters_typed = 0;
+                typedWords.clear();
+                all_displayed_words.clear();
+            }
+        } else {
+            button_1.color = RED;
+        }
+
+        if (!typing_started && letter_count > 0) {
+            typing_started = true;
+            typing_start_time = GetTime();
+        }
+
 
         if (sentence_mode) {
             DrawSentenceInBounds(current_sentence, 410, 65, box_width, box_height);
@@ -540,20 +546,20 @@ public:
                         cursorX, cursorY + cursorHeight / 2, RAYWHITE);
             }
         }
-        else {
-            DrawTextInBounds(prev_word, word_queue[0], word_queue[1], 410, 65, box_width, box_height);
+    if (!sentence_mode) {
+        DrawTextInBounds(prev_word, word_queue[0], word_queue[1], 410, 65, box_width, box_height);
 
-            // Draw the typed word
-            int wordWidth = MeasureText(word, 30);
-            int textStartX = CENTER_X - wordWidth / 2;
-            DrawTypedWord(word, word_queue[0].c_str(), textStartX, CENTER_Y, 30);
-
-            // Draw the cursor
-            if (drawCursor) {
-                DrawLine(textStartX + wordWidth, CENTER_Y - 25, 
-                         textStartX + wordWidth, CENTER_Y + 25, RAYWHITE);
-            }
+        // Draw the typed word
+        int wordWidth = MeasureText(word.get(), 30);
+        int textStartX = CENTER_X - wordWidth / 2;
+        DrawTypedWord(word.get(), word_queue[0].c_str(), textStartX, CENTER_Y, 30);
+        // Draw the cursor
+        if (drawCursor) {
+            DrawLine(textStartX + wordWidth, CENTER_Y - 25, 
+                     textStartX + wordWidth, CENTER_Y + 25, RAYWHITE);
+        
         }
+    }
 
         // Draw mode selection buttons
         DrawRectangleRec(button_0.rect, button_0.color);
@@ -562,9 +568,11 @@ public:
         DrawRectangleRec(button_1.rect, button_1.color);
         DrawText("Words", button_1.rect.x + button_1.rect.width/2 - MeasureText("Words", 10) - 10, button_1.rect.y + button_1.rect.height/2 - 20 / 2, 20, WHITE);
 
+
         // Draw time buttons
         if (!typing_started) {
             for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
+
                 DrawRectangleRec(time_buttons[i].rect, time_buttons[i].color);
                 DrawText(time_options[i], 
                          time_buttons[i].rect.x + 10, 
@@ -573,10 +581,9 @@ public:
             }
         }
 
-        // Draw current WPM
      else {
+       
         // Game over state
-        BeginDrawing();
         ClearBackground(BLACK);
 
         float wpm = calculate_wpm();
@@ -588,10 +595,11 @@ public:
         float current_wpm = calculate_wpm();
         DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
         EndDrawing();
+    
+
     }
 
     void on_exit() override{
-      free(word);
     }
 
     bool is_mouse_over_button(Button button){
