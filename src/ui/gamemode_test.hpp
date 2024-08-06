@@ -9,6 +9,8 @@
 #include <sstream>
 #include<memory>
 #include "./../scene_manager/scene_manager.hpp"
+#include "../game_logic/accuracy.hpp"
+#include "../globals.hpp"
 
 using namespace std;
 
@@ -192,8 +194,6 @@ public:
 
     float cursorContent;
     bool drawCursor;
-    vector<string> typedWords;
-    vector<string> all_displayed_words;
 
     word = std::make_unique<char[]>(MAX_INPUT_CHAR + 1);
     word[0] = '\0';
@@ -245,15 +245,6 @@ public:
         return (total_characters_typed / 5.0f) / elapsed_time; // Assuming 5 characters per word
     }
 
-    float accuracy( vector<string>& typedWords, const vector<string>& all_displayed_words) {
-        int correct_words = 0;
-        for (size_t i = 0; i < typedWords.size() && i < all_displayed_words.size(); ++i) {
-            if (typedWords[i] == all_displayed_words[i]) {
-                correct_words++;
-            }
-        }
-        return (float)correct_words / all_displayed_words.size() * 100.0f; // percentage accuracy
-    }
 
 // Drawing functions:
     int DrawTime() {
@@ -398,10 +389,10 @@ public:
                     }
                       typedWords.push_back(std::string(word.get()));
                         
+                        all_displayed_words.push_back(word_queue.front());
                         prev_word = word_queue.front();
                         word_queue.pop_front();
                         word_queue.push_back(word_generator.getNextWord());
-                        all_displayed_words.push_back(word_queue.back());
                         
                         memset(word.get(), 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
                         word[0] = '\0';
@@ -430,7 +421,8 @@ public:
         // Draw the text in the box
         int box_width = 740;
         int box_height = 150;
-
+    
+        DrawText(sessionUsername,init_width/2,20, 30, WHITE);
 
         if(!game_over){
         // Handle animation
@@ -599,6 +591,7 @@ public:
         ClearBackground(BLACK);
         float wpm = calculate_wpm();
         float acc = accuracy(typedWords, all_displayed_words);
+        std::cout << "ACCURACY: " << accuracy << endl;
         DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
         DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
         
