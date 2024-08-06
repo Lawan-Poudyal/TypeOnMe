@@ -15,6 +15,8 @@ using namespace std;
 #define MAX_INPUT_CHAR 500
 
 
+static bool timer_initialized = false;
+static double timer_start = 0.0;
 int  init_width = 1440;
 int  init_height = 760;
 int CENTER_X = init_width / 2;
@@ -123,7 +125,12 @@ class CGamemode : public Scene{
     WordGenerator word_generator;
     deque<string> word_queue;
     
-
+    int button_width;
+    int button_height;
+    int spacing;
+    int start_y;
+    int letter_count;
+    SceneManager* scenemanager;
     string current_sentence;
 
   
@@ -142,7 +149,6 @@ class CGamemode : public Scene{
 
     std::unique_ptr<char[]> word;
 
-    int letter_count; 
     float cursorContent;
     bool drawCursor;
 
@@ -156,19 +162,27 @@ class CGamemode : public Scene{
     Button button_0 ; //the button 
     Button button_1;  //the button
 public:
-   CGamemode() 
-        {
+   CGamemode(SceneManager* scenemanager) :
 
-        animating = (false);
-        typing_start_time = (0.0);
-        typing_end_time = (0.0);
-        typing_started = (false);
-        total_characters_typed = (0);
-        animation_progress = (1.0f);
-        ANIMATION_DURATION = (0.3f);
-        test_duration = (30);
-        NUM_TIME_BUTTONS =(4);
-        game_over = (false);
+    button_width(100),
+    button_height(40),
+    spacing(20),
+    start_y(100),
+    animating(false),
+    typing_start_time(0.0),
+    typing_end_time(0.0),
+        typing_started(false),
+        total_characters_typed(0),
+        animation_progress(1.0f),
+        ANIMATION_DURATION(0.3f),
+        test_duration(30),
+        NUM_TIME_BUTTONS(4),
+        game_over(false),
+     init_width(1440),
+     init_height(760),
+     scenemanager(scenemanager)
+     {
+
         memcpy(time_options, (char[4][4]){"60s", "45s", "30s", "15s"}, sizeof(time_options));
         sentence_mode = (false);
         current_sentence = ("");
@@ -176,7 +190,6 @@ public:
         sentence_generator = SentenceGenerator(sentences, global_seed);
         word_generator = WordGenerator(dictionary, global_seed);
 
-    int letter_count;
     float cursorContent;
     bool drawCursor;
     vector<string> typedWords;
@@ -193,18 +206,15 @@ public:
     Button button_1 = {0}; //the button
     for (int i = 0; i < 3; ++i) {
         word_queue.push_back(word_generator.getNextWord());
-    }
-   
-    init_button(&button_0, (Rectangle){0, 15, 200, 30}, RED);
-    init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
-        } 
+      }
+    } 
 
    void on_entry() override{
 
-    int button_width = 100;
-    int button_height = 40;
-    int spacing = 20;
-    int start_y = 100;
+
+
+    init_button(&button_0, (Rectangle){0, 15, 200, 30}, RED);
+    init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
 
     for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
         Rectangle rect = {
@@ -212,12 +222,17 @@ public:
             (float)(start_y + i * (button_height + spacing)),
             (float)button_width,
             (float)button_height
+    
         };
+
+      cout << "INIT WIDTH: "<<init_width<<endl;
+        cout << "X:" <<(init_width - button_width - 20) << endl
+             << "Y: " <<(start_y + i * (button_height + spacing)) << endl
+             << "WIDTH: "<<(float)button_width <<endl
+            << "HEIGHT: " << (float)button_height<<endl;
         init_button(&time_buttons[i], rect, DARKGRAY);
-        std::cout << "Time buttons initiated!";
     }
-
-
+  
    }
 //Button Initialization
 
@@ -242,8 +257,6 @@ public:
 
 // Drawing functions:
     int DrawTime() {
-        static bool timer_initialized = false;
-        static double timer_start = 0.0;
         int seconds = test_duration;
 
         if (typing_started && !timer_initialized) {
@@ -257,7 +270,6 @@ public:
             if (seconds < 0) seconds = 0;
         }
 
-        std::cout << "Tried Drawing Time!"<<endl;
         DrawText(TextFormat("Time: %i", seconds), init_width-200, 40, 20, WHITE);
         return seconds;
     }
@@ -306,7 +318,6 @@ public:
 
         EndScissorMode();
 
-        std::cout << "Tried Drawing Text In Bounds!"<<endl;
     }
 
     void DrawSentenceInBounds( string& sentence, int start_x, int start_y, int max_width, int max_height) {
@@ -350,7 +361,6 @@ public:
 
         EndScissorMode();
 
-        std::cout << "Tried Drawing Sentence In Bounds!"<<endl;
     }
 
     void DrawTypedWord( char* word, const char* correct_word, int x, int y, int fontSize) {
@@ -362,12 +372,10 @@ public:
         for (size_t i = 0; i < word_len; i++) {
             Color color = (i < correct_len && word[i] == correct_word[i]) ? RAYWHITE : RED;
             char temp[2] = {word[i], '\0'};
-            cout <<temp << endl;
             DrawText(temp, cursor_x, y, fontSize, color);
             cursor_x += MeasureText(temp, fontSize) + 2;
         }
 
-        std::cout << "Tried Drawing Typed Words!"<<endl;
     }
 
     void on_event() override {
@@ -382,7 +390,7 @@ public:
                 total_characters_typed++;
                 } 
             }
-                if (!sentence_mode && letter_count > 0 && (key == ' ' || word[letter_count - 1] == ' ')) {
+                if (!sentence_mode && letter_count > 0 && (key == 32 || word[letter_count - 1] == ' ')) {
                     if (word[letter_count - 1] == ' ') {
                         word[letter_count - 1] = '\0';  // Remove the space
                     } else {
@@ -409,17 +417,22 @@ public:
             letter_count--;
             word[letter_count] = '\0';
         } 
+        if(game_over && IsKeyPressed(KEY_ENTER)){
+              on_exit();
+        }
     }
     
     void on_update() override{
-        ClearBackground(BLACK);
+       
+    int remaining_time = DrawTime();
+      ClearBackground(BLACK);
 
         // Draw the text in the box
         int box_width = 740;
         int box_height = 150;
 
 
-
+        if(!game_over){
         // Handle animation
         if (animating && !sentence_mode) {
             animation_progress += GetFrameTime() / ANIMATION_DURATION;
@@ -451,7 +464,7 @@ public:
                             case 0: test_duration = 60; break;
                             case 1: test_duration = 45; break;
                             case 2: test_duration = 30; break;
-                            case 4: test_duration = 15;break;
+                            case 3: test_duration = 15;break;
                         }
                     }
                 } else {
@@ -504,8 +517,7 @@ public:
 
 
         if (sentence_mode) {
-            DrawSentenceInBounds(current_sentence, 410, 65, box_width, box_height);
-            
+            DrawSentenceInBounds(current_sentence, 410, 65, box_width, box_height); 
             // Draw the typed word with wrapping
             int fontSize = 20;
             int textStartY = CENTER_Y + box_height / 2 + 20; // Position below the box
@@ -564,7 +576,7 @@ public:
         // Draw mode selection buttons
         DrawRectangleRec(button_0.rect, button_0.color);
         DrawText("Sentence", button_0.rect.x + button_0.rect.width/2 - MeasureText("Sentence", 10) - 10, button_0.rect.y + button_0.rect.height/2 - 20 / 2, 20, WHITE);
-
+  
         DrawRectangleRec(button_1.rect, button_1.color);
         DrawText("Words", button_1.rect.x + button_1.rect.width/2 - MeasureText("Words", 10) - 10, button_1.rect.y + button_1.rect.height/2 - 20 / 2, 20, WHITE);
 
@@ -578,28 +590,29 @@ public:
                          time_buttons[i].rect.x + 10, 
                          time_buttons[i].rect.y + 10, 
                          20, WHITE);
+
             }
         }
-
-     else {
-       
+        }
+     else { 
         // Game over state
         ClearBackground(BLACK);
-
         float wpm = calculate_wpm();
         float acc = accuracy(typedWords, all_displayed_words);
         DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
         DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
-      }
+        
+     }
 
         float current_wpm = calculate_wpm();
         DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
-        EndDrawing();
-    
+        EndDrawing(); 
 
     }
 
     void on_exit() override{
+      game_over=false;  
+      ClearBackground(BLACK);
     }
 
     bool is_mouse_over_button(Button button){
