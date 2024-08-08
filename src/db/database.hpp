@@ -20,7 +20,7 @@ class Database{
     bool InitializeLeaderboard();
     std::vector<std::pair<std::string, int>> getLeaderboard();
     bool insertLeaderboard(std::pair<string,int> values);
-  
+    bool clearOutLeaderboard(int);
 
   private:
     sqlite3 *m_db;

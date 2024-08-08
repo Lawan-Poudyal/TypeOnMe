@@ -22,7 +22,7 @@ int main(){
   InitWindow(1440, 768, "TypeOnMe");
   
   SetTargetFPS(200);
-  scenemanager.switch_to("leaderboard");
+  scenemanager.switch_to("login");
   
   while(!WindowShouldClose()){ 
     BeginDrawing();

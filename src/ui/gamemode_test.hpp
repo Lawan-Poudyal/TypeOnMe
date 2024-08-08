@@ -424,7 +424,10 @@ public:
           std::cout << "USERNAME: " << session->getUsername() << "WPM: "<< calculate_wpm() << endl;
           db.insertLeaderboard(pairBuf);
         }
-
+        
+        if(game_over && IsKeyPressed(KEY_TAB)){
+          scenemanager->switch_to("leaderboard");
+        }
     }
 
 
