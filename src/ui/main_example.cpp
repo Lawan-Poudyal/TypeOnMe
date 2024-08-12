@@ -3,24 +3,28 @@
 #include <string>
 #include "./login_example.hpp"
 #include "./leaderboard.hpp"
-
+#include "./gamemode_test.hpp"
+#include "./../globals.hpp"
 int main(){
+
+  Session session; 
   SceneManager scenemanager;
-  RegistrationPage registerpage(&scenemanager);
-  LoginScene login(&scenemanager);
+  RegistrationPage registerpage(&scenemanager,&session);
+  LoginScene login(&scenemanager,&session);
   LeaderboardScene leaderboard(&scenemanager);
- //CGamemode cgamemode(&scenemanager);
+  CGamemode cgamemode(&scenemanager,&session);
   scenemanager.add("registerpage",&registerpage);
   scenemanager.add("login",&login);
   scenemanager.add("leaderboard",&leaderboard);
-  //scenemanager.add("cgamemode",&cgamemode);
+  //scenemanager.add("gamemode",&gamemode);
+  scenemanager.add("cgamemode",&cgamemode);
 
-  InitWindow(1440, 720, "TypeOnMe");
+  InitWindow(1440, 768, "TypeOnMe");
   
   SetTargetFPS(200);
-  scenemanager.switch_to("leaderboard");
+  scenemanager.switch_to("login");
   
-  while(!WindowShouldClose()){
+  while(!WindowShouldClose()){ 
     BeginDrawing();
     scenemanager.update();
     scenemanager.poll_event();

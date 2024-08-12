@@ -8,7 +8,7 @@
 #include<ctime>
 #include<unistd.h>
 #include<numeric>
-#define M_MAX_INPUT_CHARS 500
+
 
 
 
@@ -27,6 +27,7 @@ vector<string> ext_random_words;
 int count_for_closing_window_after_wpm = 0;
   
 
+#define M_MAX_INPUT_CHARS_UP 500
 
 // Class definitions
 class Cursor {
@@ -37,7 +38,7 @@ public:
     int pos2_y;
 
     Cursor(const char* word, int letter_count, bool drawCursor, int c_height) {
-        if (drawCursor && letter_count < M_MAX_INPUT_CHARS) {
+        if (drawCursor && letter_count < M_MAX_INPUT_CHARS_UP) {
             DrawLine(MeasureText(word, 30) + in_positionX + 10 + GetScreenWidth() / 2, in_positionY + GetScreenHeight() / 2  - c_height / 2,
                      in_positionX + MeasureText(word, 30) + 10 + GetScreenWidth() / 2, in_positionY + c_height / 2 + GetScreenHeight()/ 2 , RAYWHITE);
         }
@@ -58,6 +59,5 @@ public:
     }
 };
 
-int start_instance_cgamemode();
 // Class definitions end here
 

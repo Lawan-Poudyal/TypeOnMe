@@ -6,6 +6,7 @@
 #include "./login_example.hpp"
 #include "./register_example.hpp"
 #include "../db/database.hpp"
+#include "../globals.hpp"
 #include<cstdlib>
 #include<cstring>
 
@@ -23,8 +24,9 @@
 class RegistrationPage : public Scene {
 public:  
  SceneManager* scenemanager;
+ Session* session;
  
- RegistrationPage(SceneManager* scenemanager):db("credentials.db") ,scenemanager(nullptr){
+ RegistrationPage(SceneManager* scenemanager,Session* session):db("credentials.db") ,scenemanager(nullptr),session(session){
      db.query_data("", 1);
      (this->scenemanager) = scenemanager;
      memset(username,0,sizeof(char)*MAX_INPUT_CHAR_UP);
@@ -91,8 +93,11 @@ void on_exit() override{
 }
 
 void on_event(){
+  if(session->status==LOGGEDIN){
+        scenemanager->switch_to("cgamemode");
+  }
   if(IsKeyPressed(KEY_ENTER)){
-  scenemanager->switch_to("leaderboard");
+  scenemanager->switch_to("login");
   }
 
      int key = GetCharPressed();

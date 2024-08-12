@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <sqlite3.h> 
 #include <string>
+#include <vector>
 using namespace std;
 
 
@@ -16,6 +17,11 @@ class Database{
     bool checkCredentialsLogin(const std::string&,const std::string&);
     bool checkCredentialsRegister(const std::string&,const std::string&);
     bool closeDB();
+    bool InitializeLeaderboard();
+    std::vector<std::pair<std::string, int>> getLeaderboard();
+    bool insertLeaderboard(std::pair<string,int> values);
+    bool clearOutLeaderboard(int);
+
   private:
     sqlite3 *m_db;
 

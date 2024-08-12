@@ -4,7 +4,7 @@
 #include "./register_example.hpp"
 #include"../db/database.hpp"
 #include "./graph.hpp"
-
+#include "./../globals.hpp"
 #define MAX_INPUT_CHAR_UP 18
 #define MARGIN 20
 #define ELEMENT_SPACING 40
@@ -15,6 +15,9 @@
 #define DEFAULT_FONT_SIZE 20
 #define DEFAULT_HEADER_FONT_SIZE 30
 using namespace std;
+
+
+
 
 class LoginScene : public Scene {
 public:
@@ -29,31 +32,21 @@ public:
     int passwordLength = 0;
     Rectangle mainRec;
     Rectangle loginButton;
-    Rectangle guestButton;
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
+    Session* session; 
 
-    LoginScene(SceneManager* scenemanager) : db("credentials.db"), scenemanager(nullptr){
+    LoginScene(SceneManager* scenemanager,Session* session) : db("credentials.db"), scenemanager(nullptr),session(session){
         db.query_data("", 1);
+        db.InitializeLeaderboard();
         this->scenemanager = scenemanager;
         mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
         Rectangle loginButton;
-        Rectangle guestButton;  
     }
 
  void on_entry() override{
     Database db("credentials.db");
     
-    Rectangle testRec = {
-      GetScreenWidth() / 2 -450/2,
-      GetScreenHeight()-300,
-      450,
-      300
-    };
-    tuple<int,int> testTuple = {10,100};
-    vector<tuple<int,int>> pointPosition = {testTuple};
-    pointPosition.push_back(tuple<int,int>{30,75});
-    testGraph.Init(pointPosition,testRec,15);
     
     Rectangle mainRec = {
       GetScreenWidth() / 2 -210,
@@ -65,10 +58,6 @@ public:
       GetScreenHeight() / 2 + ELEMENT_SPACING,
       120,
       45 };
-    guestButton = { GetScreenWidth() / 2 + MARGIN ,
-      GetScreenHeight() / 2 + ELEMENT_SPACING ,
-      120,
-      45 }; 
     }
 
     void on_event() override {
@@ -108,18 +97,16 @@ public:
            
             if (IsButtonClicked(loginButton) && checkLoginInfo()){ 
               if(db.checkCredentialsLogin(stru,strp)) {
-               TraceLog(LOG_INFO, "Login button clicked. \n Username:%s\n Password:%s", username, password);
-           }
+
+                  session->switchStatus();
+                  session->setSessionUsername(string(username));
+                  scenemanager->switch_to("cgamemode");
+              }
             }
            else if(IsButtonClicked(loginButton)){
 
                 drawTempText=true;        
                 dt=GetFrameTime();
-           }
-
-           if (IsButtonClicked(guestButton)) {
-               TraceLog(LOG_INFO, "Signed as Guest.");
-               //scenemanager->switch_to("cGamemode");
            }
     }
 
@@ -207,15 +194,6 @@ public:
                 BLACK);
             //DrawRectangleRoundedLines(loginButton, 1, 6 , BLACK);
 
-            DrawRectangleRounded(guestButton,
-                1,
-                6,
-                LIGHTGRAY);
-            DrawText("Guest",
-                guestButton.x + 30,
-                guestButton.y + 13,
-                DEFAULT_FONT_SIZE,
-                BLACK);
            // DrawRectangleRoundedLines(guestButton, 1, 6 , BLACK);
           EndDrawing();
     }
