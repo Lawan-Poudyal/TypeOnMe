@@ -60,6 +60,7 @@ public:
       GetScreenHeight() / 2 + ELEMENT_SPACING*1 ,
       120,45
     };
+    
 
     mainRec = {
       GetScreenWidth()/ 2 -300,
@@ -71,61 +72,63 @@ public:
 
     void on_event() override {
 
-    if (IsKeyPressed(KEY_TAB)){
-               typingUsername = !typingUsername;
-               typingPassword = !typingPassword;
-           }
-
-            if (IsKeyPressed(KEY_BACKSPACE)) {
-               if (typingUsername && usernameLength > 0) {
-                   username[--usernameLength] = '\0';
-               } else if (typingPassword && passwordLength > 0) {
-                   password[--passwordLength] = '\0';
-               }
-           }
-           int key = GetCharPressed();
-               if(key >0 && key != KEY_SPACE){
-                   if(typingUsername && usernameLength < MAX_INPUT_CHAR_UP){
-                       username[usernameLength]= (char)key;
-                       username[usernameLength + 1] = '\0';
-                       usernameLength++;
-                   } else if (typingPassword && passwordLength < MAX_INPUT_CHAR_UP){
-                       password[passwordLength] = (char)key;
-                       password[passwordLength + 1] = '\0';
-                       passwordLength++;
-                   }
-               }
-
-           
-            std::string strp(password);
-            std::string stru(username);
-           
-            if (IsButtonClicked(loginButton) && checkLoginInfo()){ 
-              if(db.checkCredentialsLogin(stru,strp)) {
-
-                  session->switchStatus();
-                  session->setSessionUsername(string(username));
-                  session->setSessionScene("cgamemode");
-                  scenemanager->switch_to("cgamemode");
-              }
+        if (IsKeyPressed(KEY_TAB)){
+                typingUsername = !typingUsername;
+                typingPassword = !typingPassword;
             }
-           else if(IsButtonClicked(loginButton)){
+
+        if (IsKeyPressed(KEY_BACKSPACE)) {
+            if (typingUsername && usernameLength > 0) {
+                username[--usernameLength] = '\0';
+            } 
+            else if (typingPassword && passwordLength > 0) {
+                password[--passwordLength] = '\0';
+            }
+        }
+        int key = GetCharPressed();
+            if(key >0 && key != KEY_SPACE){
+                if(typingUsername && usernameLength < MAX_INPUT_CHAR_UP){
+                    username[usernameLength]= (char)key;
+                    username[usernameLength + 1] = '\0';
+                    usernameLength++;
+                } else if (typingPassword && passwordLength < MAX_INPUT_CHAR_UP){
+                    password[passwordLength] = (char)key;
+                    password[passwordLength + 1] = '\0';
+                    passwordLength++;
+                }
+            }
+
+            
+        std::string strp(password);
+        std::string stru(username);
+    
+        if (IsButtonClicked(loginButton) && checkLoginInfo()){ 
+            if(db.checkCredentialsLogin(stru,strp)) {
+
+                session->switchStatus();
+                session->setSessionUsername(string(username));
+                session->setSessionScene("cgamemode");
+                scenemanager->switch_to("cgamemode");
+            }
+        }
+        else if(IsButtonClicked(loginButton)){
 
                 drawTempText=true;        
                 dt=GetFrameTime();
-           }
-           if(IsButtonClicked(switchToRegistration)){
-             session->setSessionScene("registerpage");
-             scenemanager->switch_to("registerpage");
-           }
+        }
+        if(IsButtonClicked(switchToRegistration)){
+                session->setSessionScene("registerpage");
+                scenemanager->switch_to("registerpage");
+        }
     }
 
     bool IsButtonClicked(Rectangle button) {
         return (CheckCollisionPointRec(GetMousePosition(), button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON));
     }
+
     void on_update() override {
 
-      ClearBackground(Color{46,26,71});
+        ClearBackground(Color{46,26,71});
             
             testGraph.Draw(); 
             DrawRectangleRounded(mainRec, 0.3, 1, RAYWHITE); 
@@ -195,11 +198,11 @@ public:
             //DrawText(password, GetScreenWidth()/2 - 210 + 20 + 100 + 20 , GetScreenHeight()/2 + 20 - 150 + 20 +20, 20, BLACK );
         
             if (typingPassword) 
-              DrawRectangleLines(
+                DrawRectangleLines(
                 GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
                 GetScreenHeight() / 2 - ELEMENT_SPACING, INPUT_BOX_WIDTH, INPUT_BOX_HEIGHT, RED);
             else DrawRectangleLines(GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3, GetScreenHeight() / 2 - ELEMENT_SPACING, INPUT_BOX_WIDTH, INPUT_BOX_HEIGHT, LIGHTGRAY);        
-          
+            
             DrawRectangleRounded(loginButton, 1, 6 , LIGHTGRAY);
             DrawText(
                 "Login",
@@ -209,24 +212,24 @@ public:
                 BLACK);
             //DrawRectangleRoundedLines(loginButton, 1, 6 , BLACK);
 
-           // DrawRectangleRoundedLines(guestButton, 1, 6 , BLACK);
-          EndDrawing();
-    }
-    bool checkLoginInfo(){
-      return(strlen(username) && strlen(password));
-    } 
-    void renderTempText(string tempText,int posX,int posY,int fontSize,Color color){
-          //GetFrameTime()
-            DrawText(tempText.c_str(),posX,posY,fontSize,color);
-            dt+=GetFrameTime(); 
-          if(dt>3){
-              
-            return;
-          }
-    }
-    void on_exit() override {
-      db.closeDB();
-      return;
+            // DrawRectangleRoundedLines(guestButton, 1, 6 , BLACK);
+            EndDrawing();
+        }
+        bool checkLoginInfo(){
+        return(strlen(username) && strlen(password));
+        } 
+        void renderTempText(string tempText,int posX,int posY,int fontSize,Color color){
+            //GetFrameTime()
+                DrawText(tempText.c_str(),posX,posY,fontSize,color);
+                dt+=GetFrameTime(); 
+            if(dt>3){
+                
+                return;
+            }
+        }
+        void on_exit() override {
+        db.closeDB();
+        return;
     }
 
 private:

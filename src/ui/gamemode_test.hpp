@@ -26,7 +26,8 @@ int CENTER_X = init_width / 2;
 int CENTER_Y = init_height / 2;
 int global_seed = time(NULL);
 vector<string> dictionary = {"apple", "banana", "cat", "dog", "elephant", "forest", "giraffe", "honey", "ice", "jacket", "kangaroo", "lemon", "mountain", "notebook", "ocean", "pencil", "quartz", "river", "sand", "tiger", "umbrella", "violin", "whale", "xylophone", "yacht", "zebra", "ant", "balloon", "candle", "dolphin", "eagle", "fountain", "grape", "house", "igloo", "jungle", "kite", "lantern", "mirror", "nest", "owl", "peacock", "quilt", "rainbow", "sunflower", "turtle", "unicorn",  "vase", "windmill", "x-ray", "yarn"};
-vector<string> sentences = {
+
+vector<string> sentences = {    
     "Overcoming betrayal is a profound and challenging journey that requires resilience and self-compassion. It involves acknowledging the hurt and allowing oneself to grieve the loss of trust. Healing begins with introspection, understanding that the betrayal reflects more on the betrayer's character than on one's worth."
 };
 
@@ -185,12 +186,12 @@ class CGamemode : public Scene{
         test_duration(30),
         NUM_TIME_BUTTONS(4),
         game_over(false),
-     init_width(1440),
-     init_height(760),
-     scenemanager(scenemanager),
-     session(session),
-     db("credentials.db")
-     {
+    init_width(1440),
+    init_height(760),
+    scenemanager(scenemanager),
+    session(session),
+    db("credentials.db")
+    {
     
         memcpy(time_options, (char[4][4]){"60s", "45s", "30s", "15s"}, sizeof(time_options));
         sentence_mode = (false);
@@ -199,23 +200,23 @@ class CGamemode : public Scene{
         sentence_generator = SentenceGenerator(sentences, global_seed);
         word_generator = WordGenerator(dictionary, global_seed);
 
-    float cursorContent;
-    bool drawCursor;
+        float cursorContent;
+        bool drawCursor;
 
-    word = std::make_unique<char[]>(MAX_INPUT_CHAR + 1);
-    word[0] = '\0';
-    letter_count = 0;
-    
-    std::cout << "Sentences size: " << sentences.size() << std::endl;
-    std::cout << "Dictionary size: " << dictionary.size() << std::endl;
-    
-    Button button_0 = {0}; //the button
-    Button button_1 = {0}; //the button
-    Button addToLeaderboard = {0};
-    Button leaderboard = {0};
-    for (int i = 0; i < 3; ++i) {
-        word_queue.push_back(word_generator.getNextWord());
-      }
+        word = std::make_unique<char[]>(MAX_INPUT_CHAR + 1);
+        word[0] = '\0';
+        letter_count = 0;
+        
+        std::cout << "Sentences size: " << sentences.size() << std::endl;
+        std::cout << "Dictionary size: " << dictionary.size() << std::endl;
+        
+        Button button_0 = {0}; //the button
+        Button button_1 = {0}; //the button
+        Button addToLeaderboard = {0};
+        Button leaderboard = {0};
+        for (int i = 0; i < 3; ++i) {
+            word_queue.push_back(word_generator.getNextWord());
+        }
     } 
 
    void on_entry() override{

@@ -22,6 +22,32 @@
 
 
 class RegistrationPage : public Scene {
+
+private:
+
+  char* username=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
+  char* password=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
+  char* rpassword=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
+  int usernameLength;
+  int passwordLength;
+  int rpasswordLength;
+  int init_width;
+  int init_height;
+  int highlightButtonNum=1;
+  Database db;
+  typedef struct textfields{
+    string name;
+    int posX;
+    int posY;
+    int width;
+    int height;
+    bool active;
+    Color color;
+  }inputField;
+  inputField inputFieldArray[3];
+  Rectangle registerButton;
+
+
 public:  
  SceneManager* scenemanager;
  Session* session;
@@ -143,25 +169,25 @@ void on_event(){
 
   int i;
 
-  if(IsKeyPressed(KEY_TAB)){
+if(IsKeyPressed(KEY_TAB)){
 
-for(i= 0; i < sizeof(inputFieldArray)-1 ;i++){
-if(inputFieldArray[i].active && i<=3){
+  for(i = 0; i < sizeof(inputFieldArray)-1 ;i++){
+    if(inputFieldArray[i].active){
 
-if((i+1)>2){
-    inputFieldArray[i].active=!inputFieldArray[i].active;
-    inputFieldArray[(0)].active=!inputFieldArray[0].active;
-    break;
-}
-else{
-    inputFieldArray[i].active=!inputFieldArray[i].active;
-    inputFieldArray[(i+1)].active=!inputFieldArray[i+1].active;
-    break;  
-}
-}
-else{
-  }
+      if((i+1)>2){
+          inputFieldArray[i].active=!inputFieldArray[i].active;
+          inputFieldArray[(0)].active=!inputFieldArray[0].active;
+          break;
       }
+      else{
+          inputFieldArray[i].active=!inputFieldArray[i].active;
+          inputFieldArray[(i+1)].active=!inputFieldArray[i+1].active;
+          break;  
+      }
+    }
+    else{
+      }
+  }
 }
 
 
@@ -195,7 +221,7 @@ bool IsButtonClicked(Rectangle button) {
 
 void on_update() override{
 
-      ClearBackground(Color{46,26,71});
+  ClearBackground(Color{46,26,71});
   
   DrawRectangleRounded(mainRec, 0.3, 1, RAYWHITE); 
   
@@ -296,27 +322,5 @@ void drawButton(Rectangle recButton,string text="Button",Color color=LIGHTGRAY,i
       DEFAULT_FONT_SIZE,
       BLACK);
 }
-      private:
-
-     char* username=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
-     char* password=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
-     char* rpassword=static_cast<char*>(new char[MAX_INPUT_CHAR_UP]);
-     int usernameLength;
-     int passwordLength;
-     int rpasswordLength;
-     int init_width;
-     int init_height;
-     int highlightButtonNum=1;
-     Database db;
-     typedef struct textfields{
-        string name;
-        int posX;
-        int posY;
-        int width;
-        int height;
-        bool active;
-        Color color;
-      }inputField;
-    inputField inputFieldArray[3];
-    Rectangle registerButton;
+      
 };

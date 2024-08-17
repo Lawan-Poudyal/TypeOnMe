@@ -49,23 +49,24 @@ public:
     Texture2D texture2;
     Texture2D texture3;
     Texture2D textureLeaderboard;
+
     void on_entry() override {
-     first = LoadImage("assets/first.png");     
-     second = LoadImage("assets/second.png");    
-     third = LoadImage("assets/third.png");     
-     leaderboardPanel = LoadImage("assets/leaderboardPanel.png");     
-     populateLeaderboardVector(); 
+      first = LoadImage("assets/first.png");     
+      second = LoadImage("assets/second.png");    
+      third = LoadImage("assets/third.png");     
+      leaderboardPanel = LoadImage("assets/leaderboardPanel.png");     
+      populateLeaderboardVector(); 
 
 
 
-    texture1 = LoadTextureFromImage(first);
-    texture2 = LoadTextureFromImage(second);
-    texture3 = LoadTextureFromImage(third);
-    textureLeaderboard = LoadTextureFromImage(leaderboardPanel);
+      texture1 = LoadTextureFromImage(first);
+      texture2 = LoadTextureFromImage(second);
+      texture3 = LoadTextureFromImage(third);
+      textureLeaderboard = LoadTextureFromImage(leaderboardPanel);
 
-    if( (texture1.id)==0 || (texture2.id)==0 || (texture3.id)==0){
-     std::cerr << "Error loading textures!" <<endl;
-   } 
+      if( (texture1.id)==0 || (texture2.id)==0 || (texture3.id)==0){
+      std::cerr << "Error loading textures!" <<endl;
+      } 
     }
 
     void on_event() override {
@@ -78,7 +79,7 @@ public:
 
 void on_update() override {
     BeginDrawing();
-      ClearBackground(Color{46,26,71});
+    ClearBackground(Color{46,26,71});
     //DrawTextureEx(textureLeaderboard,(Vector2){GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2 - 30 , screenHeight+45},0,1,PINK);
 
     DrawRectangleRec((Rectangle){GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2-MARGIN,45,MeasureText("Leaderboard",30)+MARGIN*2,60},Color{0,0,0,128});
@@ -86,8 +87,6 @@ void on_update() override {
     DrawText("Leaderboard", GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2, screenHeight + 30*2, 30, RAYWHITE);
     int i = 0;
     for (std::pair<string, int> entry : dbLeaderboard) {
-    
-
         float yOffset = 135 + i * 90;
         float scale = 60.0f / texture1.width;
 

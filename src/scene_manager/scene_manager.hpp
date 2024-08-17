@@ -24,6 +24,10 @@ public:
 };
 
 class SceneManager {
+private:
+    Scene* curr_scene;
+    std::unordered_map<std::string, Scene*> scenes;
+
 public:
     SceneManager() : curr_scene(nullptr) {}
 
@@ -69,7 +73,4 @@ public:
         }
     }
 
-private:
-    Scene* curr_scene;
-    std::unordered_map<std::string, Scene*> scenes;
 };
