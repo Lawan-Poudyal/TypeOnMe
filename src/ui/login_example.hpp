@@ -41,9 +41,6 @@ public:
         db.query_data("", 1);
         db.InitializeLeaderboard();
         this->scenemanager = scenemanager;
-        Rectangle mainRec;
-        Rectangle loginButton;
-        Rectangle switchToRegistration;
     }
 
  void on_entry() override{

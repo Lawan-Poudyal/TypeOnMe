@@ -146,7 +146,7 @@ void on_event(){
   if(IsKeyPressed(KEY_TAB)){
 
 for(i= 0; i < sizeof(inputFieldArray)-1 ;i++){
-if(inputFieldArray[i].active && i<=3){
+ if(inputFieldArray[i].active){
 
 if((i+1)>2){
     inputFieldArray[i].active=!inputFieldArray[i].active;

@@ -39,7 +39,7 @@ public:
             int wordWidth = MeasureText(word, 30);
             int cursorX = CENTER_X + wordWidth / 2;
             DrawLine(cursorX, CENTER_Y - c_height / 2,
-                     cursorX, CENTER_Y + c_height / 2, RAYWHITE);
+                     cursorX, CENTER_Y + c_height / 2, PINK);
         }
     }
 };
@@ -113,6 +113,9 @@ public:
 
 class CGamemode : public Scene{
   private:
+
+    float current_wpm;
+    float wpm;
     Database db;
     int remaining_time;
     string prev_word;
@@ -219,6 +222,8 @@ class CGamemode : public Scene{
     } 
 
    void on_entry() override{
+    wpm =0;
+    current_wpm =0;
     typing_started = false;
     game_over = false;
     timer_initialized=false;
@@ -424,7 +429,7 @@ class CGamemode : public Scene{
               on_exit();
         }
         if(game_over && IsButtonClicked(addToLeaderboard.rect)){
-          std::pair <string,int> pairBuf(session->getUsername(),calculate_wpm());
+          std::pair <string,int> pairBuf(session->getUsername(),wpm);
           std::cout << "USERNAME: " << session->getUsername() << "WPM: "<< calculate_wpm() << endl;
           db.insertLeaderboard(pairBuf);
         }
@@ -583,7 +588,7 @@ class CGamemode : public Scene{
             if (drawCursor) {
                 int cursorHeight = fontSize + 10;
                 DrawLine(cursorX, cursorY - cursorHeight / 2, 
-                        cursorX, cursorY + cursorHeight / 2, RAYWHITE);
+                        cursorX, cursorY + cursorHeight / 2, PINK);
             }
         }
     if (!sentence_mode) {
@@ -596,7 +601,7 @@ class CGamemode : public Scene{
         // Draw the cursor
         if (drawCursor) {
             DrawLine(textStartX + wordWidth, CENTER_Y - 25, 
-                     textStartX + wordWidth, CENTER_Y + 25, RAYWHITE);
+                     textStartX + wordWidth, CENTER_Y + 25, PINK);
         
         }
     }
@@ -622,25 +627,28 @@ class CGamemode : public Scene{
             }
         }
         }
+
      else { 
         // Game over state
       ClearBackground(Color{46,26,71});
-        float wpm = calculate_wpm();
-        float acc = accuracy(typedWords, all_displayed_words);
+      float acc = accuracy(typedWords, all_displayed_words);
+        if(wpm){ 
+          current_wpm = wpm;
+        }
+        else{
+          current_wpm=calculate_wpm();
+          wpm = calculate_wpm(); 
+        }
         DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
         DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
         DrawRectangleRec(addToLeaderboard.rect,addToLeaderboard.color);
         DrawText("Add To Leaderboard", addToLeaderboard.rect.x + addToLeaderboard.rect.width/2 - MeasureText("Add To Leaderboard", 10) - 10, addToLeaderboard.rect.y + addToLeaderboard.rect.height/2 - 20 / 2, 20, WHITE);
      }
 
-        float current_wpm = calculate_wpm();
-        DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
-    
-
+        DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE); 
 
         DrawRectangleRec(leaderboard.rect,leaderboard.color);
         DrawText("Leaderboard",GetScreenWidth()-MeasureText("Leaderboard",20)-5,GetScreenHeight()-40,20,WHITE);
-
         EndDrawing(); 
     }
 
