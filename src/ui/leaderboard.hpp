@@ -70,7 +70,7 @@ public:
 
     void on_event() override {
   
-      if(IsKeyPressed(KEY_TAB)){
+      if(IsKeyPressed(KEY_ENTER)){
           scenemanager->switch_to(session->currSessionScene());
       }
 

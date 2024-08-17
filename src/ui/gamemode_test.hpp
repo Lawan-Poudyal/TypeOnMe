@@ -624,7 +624,7 @@ class CGamemode : public Scene{
         }
      else { 
         // Game over state
-        ClearBackground(BLACK);
+      ClearBackground(Color{46,26,71});
         float wpm = calculate_wpm();
         float acc = accuracy(typedWords, all_displayed_words);
         DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);

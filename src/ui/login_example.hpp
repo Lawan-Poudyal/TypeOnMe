@@ -71,11 +71,6 @@ public:
 
     void on_event() override {
 
-    if(IsKeyPressed(KEY_ENTER)){
-        session->setSessionScene("registerpage");
-        scenemanager->switch_to("registerpage");
-        return;
-    }
     if (IsKeyPressed(KEY_TAB)){
                typingUsername = !typingUsername;
                typingPassword = !typingPassword;
