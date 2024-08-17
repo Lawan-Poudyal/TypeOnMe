@@ -25,6 +25,7 @@ class RegistrationPage : public Scene {
 public:  
  SceneManager* scenemanager;
  Session* session;
+ Rectangle mainRec;
  
  RegistrationPage(SceneManager* scenemanager,Session* session):db("credentials.db") ,scenemanager(nullptr),session(session){
      db.query_data("", 1);
@@ -83,8 +84,12 @@ public:
       .height=BUTTON_HEIGHT 
     };
 
-
-
+    mainRec = {
+      GetScreenWidth()/ 2 -400,
+      GetScreenHeight()/ 2 -200,
+      550,
+      300};
+ 
  }
 
 void on_exit() override{
@@ -94,10 +99,12 @@ void on_exit() override{
 
 void on_event(){
   if(session->status==LOGGEDIN){
+        session->setSessionScene("cgamemode");
         scenemanager->switch_to("cgamemode");
   }
   if(IsKeyPressed(KEY_ENTER)){
-  scenemanager->switch_to("login");
+    session->setSessionScene("login");
+    scenemanager->switch_to("login");
   }
 
      int key = GetCharPressed();
@@ -188,7 +195,10 @@ bool IsButtonClicked(Rectangle button) {
 
 void on_update() override{
 
-  ClearBackground(RAYWHITE);
+      ClearBackground(Color{46,26,71});
+  
+  DrawRectangleRounded(mainRec, 0.3, 1, RAYWHITE); 
+  
   DrawText("User Registration Page",
             inputFieldArray[0].posX-MeasureText("Username:",DEFAULT_FONT_SIZE),
             GetScreenHeight()/2-MARGIN*8,

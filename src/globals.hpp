@@ -12,9 +12,11 @@ class Session{
     std::string retrieveSessionUsername(){
       return this->username;
     }
+    std::string currScene;
   public:
 
     Status status;
+      
     Session():status(NOTLOGGEDIN){
       
     }
@@ -37,5 +39,14 @@ class Session{
       else{
         this->username = string("NOT LOGGED IN!");
       }
+      return;
     } 
+    std::string currSessionScene(){
+        return currScene;
+    }
+    
+    void setSessionScene(std::string sessionScene){
+        currScene = sessionScene;
+      return;
+    }
 };

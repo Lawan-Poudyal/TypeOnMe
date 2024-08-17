@@ -1,4 +1,4 @@
-#include "raylib.h"
+
 #include <vector>
 #include <string>
 #include <deque>
@@ -165,7 +165,8 @@ class CGamemode : public Scene{
     Button button_0 ; //the button 
     Button button_1;  //the button
     Button addToLeaderboard;
-public:
+    Button leaderboard;
+  public:
 
 
    CGamemode(SceneManager* scenemanager,Session* session) :
@@ -211,19 +212,22 @@ public:
     Button button_0 = {0}; //the button
     Button button_1 = {0}; //the button
     Button addToLeaderboard = {0};
+    Button leaderboard = {0};
     for (int i = 0; i < 3; ++i) {
         word_queue.push_back(word_generator.getNextWord());
       }
     } 
 
    void on_entry() override{
+    typing_started = false;
+    game_over = false;
+    timer_initialized=false;
 
-
-
-    init_button(&button_0, (Rectangle){0, 15, 200, 30}, RED);
-    init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
-    init_button(&addToLeaderboard,(Rectangle){init_width/2-50, init_height/2+100,200+100,30},RED); 
-
+    init_button(&button_0, (Rectangle){0, 15, 200, 30}, Color{0,0,0,128});
+    init_button(&button_1, (Rectangle){210, 15, 200, 30}, Color{0,0,0,128});
+    init_button(&addToLeaderboard,(Rectangle){init_width/2-50, init_height/2+100,200+100,30},Color{0,0,0,128}); 
+    init_button(&leaderboard,(Rectangle){init_width- MeasureText("Leaderboard",20)-10, init_height - 40,MeasureText("leaderboard",20)+50,30},Color{0,0,0,128}); 
+    
     for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
         Rectangle rect = {
             (float)(init_width - button_width - 20),
@@ -238,7 +242,7 @@ public:
              << "Y: " <<(start_y + i * (button_height + spacing)) << endl
              << "WIDTH: "<<(float)button_width <<endl
             << "HEIGHT: " << (float)button_height<<endl;
-        init_button(&time_buttons[i], rect, DARKGRAY);
+        init_button(&time_buttons[i], rect, Color{0,0,0,128});
     }
   
    }
@@ -281,7 +285,7 @@ public:
         float roundness = 0.3f;
         int segments = 10;
             
-        DrawRectangleRounded(rect, roundness, segments, BLUE);
+        DrawRectangleRounded(rect, roundness, segments, Color{0,0,0,128});
 
         //Restricts drawing operations to within the specified rectangle
         BeginScissorMode(start_x, start_y, max_width, max_height);
@@ -325,7 +329,7 @@ public:
         float roundness = 0.3f;
         int segments = 10;
             
-        DrawRectangleRounded(rect, roundness, segments, BLUE);
+        DrawRectangleRounded(rect, roundness, segments, Color{0,0,0,128});
 
         BeginScissorMode(start_x, start_y, max_width, max_height);
         
@@ -425,7 +429,7 @@ public:
           db.insertLeaderboard(pairBuf);
         }
         
-        if(game_over && IsKeyPressed(KEY_TAB)){
+        if(IsButtonClicked(leaderboard.rect) && (!typing_started || game_over)){
           scenemanager->switch_to("leaderboard");
         }
     }
@@ -434,11 +438,13 @@ public:
     bool IsButtonClicked(Rectangle button) {
         return (CheckCollisionPointRec(GetMousePosition(), button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON));
     }
-    
-    void on_update() override{
+
+
+
+    void on_update() override {
        
     int remaining_time = DrawTime();
-      ClearBackground(BLACK);
+      ClearBackground(Color{46,26,71});
 
         // Draw the text in the box
         int box_width = 740;
@@ -469,10 +475,11 @@ public:
 
 
         if (!typing_started) {
+
             // Handle time button clicks
             for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
                 if (is_mouse_over_button(time_buttons[i])) {
-                    time_buttons[i].color = GRAY;
+                    time_buttons[i].color = PINK;
                     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                         switch (i) {
                             case 0: test_duration = 60; break;
@@ -482,14 +489,21 @@ public:
                         }
                     }
                 } else {
-                    time_buttons[i].color = DARKGRAY;
+                    time_buttons[i].color = Color{0,0,0,128};
                 }
             }
         }
 
-        // Handle mode selection buttons
+
+        if( is_mouse_over_button(leaderboard) ){
+          leaderboard.color=PINK;
+        }
+        else{
+          leaderboard.color=Color{0,0,0,128};
+        }
+
         if (is_mouse_over_button(button_0)) {
-            button_0.color = GRAY;
+            button_0.color = PINK;
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
                 sentence_mode = true;
                 current_sentence = sentence_generator.getNextSentence();
@@ -501,11 +515,11 @@ public:
                 all_displayed_words.clear();
             }
         } else {
-            button_0.color = RED;
+            button_0.color = Color{0,0,0,128};
         }
 
         if (is_mouse_over_button(button_1)) {
-            button_1.color = GRAY;
+            button_1.color = PINK;
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !typing_started) {
                 sentence_mode = false;
                 word_queue.clear();
@@ -521,10 +535,10 @@ public:
                 all_displayed_words.clear();
             }
         } else {
-            button_1.color = RED;
+            button_1.color = Color{0,0,0,128};
         }
 
-        if (!typing_started && letter_count > 0) {
+        if (!typing_started && letter_count > 1) {
             typing_started = true;
             typing_start_time = GetTime();
         }
@@ -610,20 +624,24 @@ public:
         }
      else { 
         // Game over state
-        ClearBackground(BLACK);
+      ClearBackground(Color{46,26,71});
         float wpm = calculate_wpm();
         float acc = accuracy(typedWords, all_displayed_words);
         DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
         DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
         DrawRectangleRec(addToLeaderboard.rect,addToLeaderboard.color);
         DrawText("Add To Leaderboard", addToLeaderboard.rect.x + addToLeaderboard.rect.width/2 - MeasureText("Add To Leaderboard", 10) - 10, addToLeaderboard.rect.y + addToLeaderboard.rect.height/2 - 20 / 2, 20, WHITE);
-
      }
 
         float current_wpm = calculate_wpm();
         DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
-        EndDrawing(); 
+    
 
+
+        DrawRectangleRec(leaderboard.rect,leaderboard.color);
+        DrawText("Leaderboard",GetScreenWidth()-MeasureText("Leaderboard",20)-5,GetScreenHeight()-40,20,WHITE);
+
+        EndDrawing(); 
     }
 
     void on_exit() override{
