@@ -32,6 +32,7 @@ public:
     int passwordLength = 0;
     Rectangle mainRec;
     Rectangle loginButton;
+    Rectangle switchToRegistration;
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
     Session* session; 
@@ -40,24 +41,32 @@ public:
         db.query_data("", 1);
         db.InitializeLeaderboard();
         this->scenemanager = scenemanager;
-        mainRec = {screenWidth / 2 - 210, screenHeight / 2 - 150, 450, 300};
+        Rectangle mainRec;
         Rectangle loginButton;
+        Rectangle switchToRegistration;
     }
 
  void on_entry() override{
     Database db("credentials.db");
     
     
-    Rectangle mainRec = {
-      GetScreenWidth() / 2 -210,
-      GetScreenHeight() / 2 - 150,
-      450,
-      300};
     loginButton = { 
       GetScreenWidth() / 2 - BUTTON_WIDTH,
       GetScreenHeight() / 2 + ELEMENT_SPACING,
       120,
       45 };
+    switchToRegistration = {
+     GetScreenWidth()/2  - INPUT_BOX_WIDTH -MARGIN*4,
+      GetScreenHeight() / 2 + ELEMENT_SPACING*1 ,
+      120,45
+    };
+
+    mainRec = {
+      GetScreenWidth()/ 2 -300,
+      GetScreenHeight()/ 2 -200,
+      450,
+      300};
+
     }
 
     void on_event() override {
@@ -110,6 +119,10 @@ public:
                 drawTempText=true;        
                 dt=GetFrameTime();
            }
+           if(IsButtonClicked(switchToRegistration)){
+             session->setSessionScene("registerpage");
+             scenemanager->switch_to("registerpage");
+           }
     }
 
     bool IsButtonClicked(Rectangle button) {
@@ -117,11 +130,16 @@ public:
     }
     void on_update() override {
 
-            ClearBackground(RAYWHITE); 
+      ClearBackground(Color{46,26,71});
             
             testGraph.Draw(); 
-            DrawRectangleRounded(mainRec, 0.3, 0, RAYWHITE); 
-
+            DrawRectangleRounded(mainRec, 0.3, 1, RAYWHITE); 
+            DrawText("Not Registered Yet?",
+                GetScreenWidth()/2  - INPUT_BOX_WIDTH -MARGIN*4,
+                GetScreenHeight() / 2 + ELEMENT_SPACING*1 ,
+                15,
+                BLACK);
+            
             DrawText(
                 "User Login Page",
                 GetScreenWidth()/2 - INPUT_BOX_WIDTH ,

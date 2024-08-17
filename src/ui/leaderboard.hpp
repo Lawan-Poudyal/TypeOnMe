@@ -78,32 +78,35 @@ public:
 
 void on_update() override {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawTextureEx(textureLeaderboard,(Vector2){GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2 - 30 , screenHeight+45},0,1,WHITE);
-    DrawText("Leaderboard", GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2, screenHeight + 30*2, 30, BLACK);
+      ClearBackground(Color{46,26,71});
+    //DrawTextureEx(textureLeaderboard,(Vector2){GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2 - 30 , screenHeight+45},0,1,PINK);
+
+    DrawRectangleRec((Rectangle){GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2-MARGIN,45,MeasureText("Leaderboard",30)+MARGIN*2,60},Color{0,0,0,128});
+
+    DrawText("Leaderboard", GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2, screenHeight + 30*2, 30, RAYWHITE);
     int i = 0;
     for (std::pair<string, int> entry : dbLeaderboard) {
     
 
-        float yOffset = 100 + i * 100;
+        float yOffset = 135 + i * 90;
         float scale = 60.0f / texture1.width;
 
         if (i == 0) {
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color {255,197,58,255});
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45},Color{0,0,0,128});
             DrawTextureEx(texture1, (Vector2){150,yOffset-20}, 0, scale, WHITE);
         } else if (i == 1) {
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color {212,212,212,255});
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45}, Color {0,0,0,128});
             DrawTextureEx(texture2, (Vector2){150, yOffset-20}, 0, scale, WHITE);
         } else if (i == 2) {
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color {199,110,77,255});
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45}, Color {0,0,0,128});
             DrawTextureEx(texture3, (Vector2){150, yOffset-20}, 0, scale, WHITE); 
         }
         else{
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, LIGHTGRAY);
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45}, Color{0,0,0,128});
         }
         
-        DrawText(entry.first.c_str(), GetScreenWidth()/2 - 100, yOffset, 30, BLACK);
-        DrawText(to_string(entry.second).c_str(), GetScreenWidth()/2 + 100, yOffset, 30, BLACK);
+        DrawText(entry.first.c_str(), GetScreenWidth()/2 - 100, yOffset, 30, RAYWHITE);
+        DrawText(to_string(entry.second).c_str(), GetScreenWidth()/2 + 100, yOffset, 30, RAYWHITE);
 
         i++;
     }
