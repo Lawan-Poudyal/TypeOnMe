@@ -38,7 +38,7 @@ public:
     Image first ;     
     Image second ;    
     Image third ;     
-
+    Image leaderboardPanel;
     LeaderboardScene(SceneManager* scenemanager,Session* session) : scenemanager(nullptr),db("credentials.db"),session(nullptr) {
         this->session = session;
         this->scenemanager = scenemanager;
@@ -48,17 +48,22 @@ public:
     Texture2D texture1;
     Texture2D texture2;
     Texture2D texture3;
-
+    Texture2D textureLeaderboard;
     void on_entry() override {
      first = LoadImage("assets/first.png");     
      second = LoadImage("assets/second.png");    
      third = LoadImage("assets/third.png");     
-    populateLeaderboardVector(); 
+     leaderboardPanel = LoadImage("assets/leaderboardPanel.png");     
+     populateLeaderboardVector(); 
+
+
 
     texture1 = LoadTextureFromImage(first);
     texture2 = LoadTextureFromImage(second);
     texture3 = LoadTextureFromImage(third);
-   if( (texture1.id)==0 || (texture2.id)==0 || (texture3.id)==0){
+    textureLeaderboard = LoadTextureFromImage(leaderboardPanel);
+
+    if( (texture1.id)==0 || (texture2.id)==0 || (texture3.id)==0){
      std::cerr << "Error loading textures!" <<endl;
    } 
     }
@@ -74,28 +79,32 @@ public:
 void on_update() override {
     BeginDrawing();
     ClearBackground(RAYWHITE);
-
+    DrawTextureEx(textureLeaderboard,(Vector2){GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2 - 30 , screenHeight+45},0,1,WHITE);
     DrawText("Leaderboard", GetScreenWidth()/2 - MeasureText("Leaderboard",30)/2, screenHeight + 30*2, 30, BLACK);
-
     int i = 0;
     for (std::pair<string, int> entry : dbLeaderboard) {
+    
+
         float yOffset = 100 + i * 100;
         float scale = 60.0f / texture1.width;
+
+        if (i == 0) {
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color {255,197,58,255});
+            DrawTextureEx(texture1, (Vector2){150,yOffset-20}, 0, scale, WHITE);
+        } else if (i == 1) {
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color {212,212,212,255});
+            DrawTextureEx(texture2, (Vector2){150, yOffset-20}, 0, scale, WHITE);
+        } else if (i == 2) {
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color {199,110,77,255});
+            DrawTextureEx(texture3, (Vector2){150, yOffset-20}, 0, scale, WHITE); 
+        }
+        else{
+            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, LIGHTGRAY);
+        }
         
-        DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, LIGHTGRAY);
         DrawText(entry.first.c_str(), GetScreenWidth()/2 - 100, yOffset, 30, BLACK);
         DrawText(to_string(entry.second).c_str(), GetScreenWidth()/2 + 100, yOffset, 30, BLACK);
 
-        if (i == 0) {
-            DrawTextureEx(texture1, (Vector2){150,yOffset-20}, 0, scale, WHITE);
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color{});
-        } else if (i == 1) {
-            DrawTextureEx(texture2, (Vector2){150, yOffset-20}, 0, scale, WHITE);
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color{});
-        } else if (i == 2) {
-            DrawTextureEx(texture3, (Vector2){150, yOffset-20}, 0, scale, WHITE); 
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 30}, Color{});
-        }
         i++;
     }
 
@@ -108,10 +117,11 @@ void on_update() override {
     UnloadImage(first); 
     UnloadImage(second); 
     UnloadImage(third);
-
+    UnloadImage(leaderboardPanel);
       UnloadTexture(texture1);
       UnloadTexture(texture2);
       UnloadTexture(texture3);
+      UnloadTexture(textureLeaderboard);
 
     }
 
