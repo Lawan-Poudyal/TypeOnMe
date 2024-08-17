@@ -63,6 +63,7 @@ public:
     void on_event() override {
 
     if(IsKeyPressed(KEY_ENTER)){
+        session->setSessionScene("registerpage");
         scenemanager->switch_to("registerpage");
         return;
     }
@@ -100,6 +101,7 @@ public:
 
                   session->switchStatus();
                   session->setSessionUsername(string(username));
+                  session->setSessionScene("cgamemode");
                   scenemanager->switch_to("cgamemode");
               }
             }

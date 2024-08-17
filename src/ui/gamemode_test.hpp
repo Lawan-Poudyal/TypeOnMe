@@ -1,4 +1,4 @@
-#include "raylib.h"
+
 #include <vector>
 #include <string>
 #include <deque>
@@ -165,7 +165,8 @@ class CGamemode : public Scene{
     Button button_0 ; //the button 
     Button button_1;  //the button
     Button addToLeaderboard;
-public:
+    Button leaderboard;
+  public:
 
 
    CGamemode(SceneManager* scenemanager,Session* session) :
@@ -211,19 +212,22 @@ public:
     Button button_0 = {0}; //the button
     Button button_1 = {0}; //the button
     Button addToLeaderboard = {0};
+    Button leaderboard = {0};
     for (int i = 0; i < 3; ++i) {
         word_queue.push_back(word_generator.getNextWord());
       }
     } 
 
    void on_entry() override{
-
-
+    typing_started = false;
+    game_over = false;
+    timer_initialized=false;
 
     init_button(&button_0, (Rectangle){0, 15, 200, 30}, RED);
     init_button(&button_1, (Rectangle){210, 15, 200, 30}, RED);
     init_button(&addToLeaderboard,(Rectangle){init_width/2-50, init_height/2+100,200+100,30},RED); 
-
+    init_button(&leaderboard,(Rectangle){init_width- MeasureText("Leaderboard",20)-10, init_height - 40,MeasureText("leaderboard",20)+50,30},GRAY); 
+    
     for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
         Rectangle rect = {
             (float)(init_width - button_width - 20),
@@ -425,7 +429,7 @@ public:
           db.insertLeaderboard(pairBuf);
         }
         
-        if(game_over && IsKeyPressed(KEY_TAB)){
+        if(IsButtonClicked(leaderboard.rect) && (!typing_started || game_over)){
           scenemanager->switch_to("leaderboard");
         }
     }
@@ -434,8 +438,10 @@ public:
     bool IsButtonClicked(Rectangle button) {
         return (CheckCollisionPointRec(GetMousePosition(), button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON));
     }
-    
-    void on_update() override{
+
+
+
+    void on_update() override {
        
     int remaining_time = DrawTime();
       ClearBackground(BLACK);
@@ -524,7 +530,7 @@ public:
             button_1.color = RED;
         }
 
-        if (!typing_started && letter_count > 0) {
+        if (!typing_started && letter_count > 1) {
             typing_started = true;
             typing_start_time = GetTime();
         }
@@ -617,13 +623,16 @@ public:
         DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
         DrawRectangleRec(addToLeaderboard.rect,addToLeaderboard.color);
         DrawText("Add To Leaderboard", addToLeaderboard.rect.x + addToLeaderboard.rect.width/2 - MeasureText("Add To Leaderboard", 10) - 10, addToLeaderboard.rect.y + addToLeaderboard.rect.height/2 - 20 / 2, 20, WHITE);
-
      }
 
         float current_wpm = calculate_wpm();
         DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
-        EndDrawing(); 
+    
 
+        DrawRectangleRec(leaderboard.rect,leaderboard.color);
+        DrawText("Leaderboard",GetScreenWidth()-MeasureText("Leaderboard",20)-5,GetScreenHeight()-40,20,WHITE);
+
+        EndDrawing(); 
     }
 
     void on_exit() override{

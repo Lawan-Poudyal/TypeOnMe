@@ -94,10 +94,12 @@ void on_exit() override{
 
 void on_event(){
   if(session->status==LOGGEDIN){
+        session->setSessionScene("cgamemode");
         scenemanager->switch_to("cgamemode");
   }
   if(IsKeyPressed(KEY_ENTER)){
-  scenemanager->switch_to("login");
+    session->setSessionScene("login");
+    scenemanager->switch_to("login");
   }
 
      int key = GetCharPressed();

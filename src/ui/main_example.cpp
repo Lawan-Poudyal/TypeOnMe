@@ -11,7 +11,7 @@ int main(){
   SceneManager scenemanager;
   RegistrationPage registerpage(&scenemanager,&session);
   LoginScene login(&scenemanager,&session);
-  LeaderboardScene leaderboard(&scenemanager);
+  LeaderboardScene leaderboard(&scenemanager,&session);
   CGamemode cgamemode(&scenemanager,&session);
   scenemanager.add("registerpage",&registerpage);
   scenemanager.add("login",&login);
@@ -22,6 +22,7 @@ int main(){
   InitWindow(1440, 768, "TypeOnMe");
   
   SetTargetFPS(200);
+  session.setSessionScene("login");
   scenemanager.switch_to("login");
   
   while(!WindowShouldClose()){ 
