@@ -6,7 +6,7 @@
 #include "./gamemode_test.hpp"
 #include "./../globals.hpp"
 int main(){
-
+  InitAudioDevice();
   Session session; 
   SceneManager scenemanager;
   RegistrationPage registerpage(&scenemanager,&session);

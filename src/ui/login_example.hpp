@@ -4,6 +4,7 @@
 #include "./register_example.hpp"
 #include"../db/database.hpp"
 #include "./graph.hpp"
+#include "./notification.hpp"
 #include "./../globals.hpp"
 #define MAX_INPUT_CHAR_UP 18
 #define MARGIN 20
@@ -19,12 +20,16 @@ using namespace std;
 
 
 
-class LoginScene : public Scene {
+class LoginScene : public Scene{
 public:
+    Sound errorSound;
+    bool drawNotif=false;
+    Image logo;
+    Texture logoTex;  
     Graph testGraph; 
     char username[MAX_INPUT_CHAR_UP + 1] = "\0";
     char password[MAX_INPUT_CHAR_UP + 1] = "\0";
-
+    Notification notification ;
     bool typingUsername = true;
     bool typingPassword = false;
 
@@ -44,8 +49,12 @@ public:
     }
 
  void on_entry() override{
+    errorSound = LoadSound("assets/sound_effects/_windows_se.wav");
     Database db("credentials.db");
     
+    notification.label("Empty or Wrong Credentials!",1,2); 
+    logo = LoadImage("assets/_typeonmelogo.png");
+    logoTex = LoadTextureFromImage(logo);
     
     loginButton = { 
       GetScreenWidth() / 2 - BUTTON_WIDTH,
@@ -68,6 +77,28 @@ public:
 
     void on_event() override {
 
+    if(IsKeyPressed(KEY_ENTER)){
+
+            std::string strp(password);
+            std::string stru(username);
+            if (checkLoginInfo()){ 
+              if(db.checkCredentialsLogin(stru,strp)) {
+
+                  session->switchStatus();
+                  session->setSessionUsername(string(username));
+                  session->setSessionScene("cgamemode");
+                  scenemanager->switch_to("cgamemode");
+              }
+              else{
+                PlaySound(errorSound);
+                drawNotif=true;
+              }
+            }
+            else{
+              PlaySound(errorSound);
+              drawNotif = true;
+            }
+    }
     if (IsKeyPressed(KEY_TAB)){
                typingUsername = !typingUsername;
                typingPassword = !typingPassword;
@@ -123,8 +154,9 @@ public:
     void on_update() override {
 
       ClearBackground(Color{46,26,71});
-            
-            testGraph.Draw(); 
+               
+            testGraph.Draw();
+            DrawTextureEx(logoTex, (Vector2){GetScreenWidth()/2-logoTex.width/2, logoTex.height-80}, 0, 1, WHITE); 
             DrawRectangleRounded(mainRec, 0.3, 1, RAYWHITE); 
             DrawText("Not Registered Yet?",
                 GetScreenWidth()/2  - INPUT_BOX_WIDTH -MARGIN*4,
@@ -151,7 +183,15 @@ public:
                 GetScreenHeight()/ 2 - ELEMENT_SPACING*2,
                 DEFAULT_FONT_SIZE,
                 BLACK);
-        
+              
+            if(drawNotif){
+              drawNotif = notification.draw();
+            }
+            else{
+              notification.label("Empty or Wrong Credentials!",1,2); 
+            }
+
+
             if (typingUsername) DrawRectangleLines( 
                 GetScreenWidth() / 2 - INPUT_BOX_WIDTH / 2 - MARGIN*3,
                 GetScreenHeight()/ 2  - ELEMENT_SPACING*2,
@@ -222,6 +262,9 @@ public:
           }
     }
     void on_exit() override {
+      UnloadImage(logo);
+      UnloadTexture(logoTex);
+      UnloadSound(errorSound);
       db.closeDB();
       return;
     }
