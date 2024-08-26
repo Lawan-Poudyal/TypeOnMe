@@ -196,7 +196,8 @@ class CGamemode : public Scene{
      db("credentials.db")
      {
     
-        memcpy(time_options, (char[4][4]){"60s", "45s", "30s", "15s"}, sizeof(time_options));
+        const char time_options_src[4][4] = {"60s", "45s", "30s", "15s"};
+        memcpy(time_options, time_options_src, sizeof(time_options));
         sentence_mode = (false);
         current_sentence = ("");
         prev_word = ("");
@@ -234,8 +235,6 @@ class CGamemode : public Scene{
     init_button(&addToLeaderboard,(Rectangle){init_width/2-50, init_height/2+100,200+100,30},Color{0,0,0,128}); 
     init_button(&leaderboard,(Rectangle){init_width- MeasureText("Leaderboard",20)-10, init_height - 40,MeasureText("leaderboard",20)+50,30},Color{0,0,0,128}); 
     
-    font = LoadFont("assets/resources/pixelplay.ttf");
-
     for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
         Rectangle rect = {
             (float)(init_width - button_width - 20),
@@ -633,7 +632,6 @@ class CGamemode : public Scene{
      else { 
         // Game over state
       ClearBackground(Color{46,26,71});
-      
       float acc = accuracy(typedWords, all_displayed_words);
         if(wpm){ 
           current_wpm = wpm;
@@ -667,7 +665,6 @@ class CGamemode : public Scene{
       for (int i = 0; i < 3; ++i) {
           word_queue.push_back(word_generator.getNextWord());
       }
-      UnloadFont(font);
       prev_word = "";
       memset(word.get(), 0, sizeof(char) * (MAX_INPUT_CHAR + 1));
       word[0] = '\0';
