@@ -89,17 +89,17 @@ void on_update() override {
         float scale = 60.0f / texture1.width;
 
         if (i == 0) {
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45},Color{0,0,0,128});
-            DrawTextureEx(texture1, (Vector2){150,yOffset-20}, 0, scale, WHITE);
+            DrawRectangleRec((Rectangle){300, yOffset, GetScreenWidth() * 0.6f - 20, 45},Color{0,0,0,128});
+            DrawTextureEx(texture1, (Vector2){300,yOffset-20}, 0, scale, WHITE);
         } else if (i == 1) {
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45}, Color {0,0,0,128});
-            DrawTextureEx(texture2, (Vector2){150, yOffset-20}, 0, scale, WHITE);
+            DrawRectangleRec((Rectangle){300, yOffset, GetScreenWidth() * 0.6f - 20, 45}, Color {0,0,0,128});
+            DrawTextureEx(texture2, (Vector2){300, yOffset-20}, 0, scale, WHITE);
         } else if (i == 2) {
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45}, Color {0,0,0,128});
-            DrawTextureEx(texture3, (Vector2){150, yOffset-20}, 0, scale, WHITE); 
+            DrawRectangleRec((Rectangle){300, yOffset, GetScreenWidth() * 0.6f - 20, 45}, Color {0,0,0,128});
+            DrawTextureEx(texture3, (Vector2){300, yOffset-20}, 0, scale, WHITE); 
         }
         else{
-            DrawRectangleRec((Rectangle){150, yOffset, GetScreenWidth() * 0.75f - 20, 45}, Color{0,0,0,128});
+            DrawRectangleRec((Rectangle){300, yOffset, GetScreenWidth() * 0.6f - 20, 45}, Color{0,0,0,128});
         }
         
         DrawText(entry.first.c_str(), GetScreenWidth()/2 - 100, yOffset, 30, RAYWHITE);
@@ -136,4 +136,3 @@ private:
     SceneManager* scenemanager;
     std::vector<std::pair<string,int>> dbLeaderboard;
 };
-
