@@ -27,7 +27,9 @@ public:
  Session* session;
  Rectangle mainRec;
  
- RegistrationPage(SceneManager* scenemanager,Session* session):db("credentials.db") ,scenemanager(nullptr),session(session){
+  Image logo;
+  Texture logoTex;
+  RegistrationPage(SceneManager* scenemanager,Session* session):db("credentials.db") ,scenemanager(nullptr),session(session){
      db.query_data("", 1);
      (this->scenemanager) = scenemanager;
      memset(username,0,sizeof(char)*MAX_INPUT_CHAR_UP);
@@ -45,6 +47,8 @@ public:
  
  void on_entry() override{
 
+    logo = LoadImage("assets/_typeonmelogo.png");
+    logoTex = LoadTextureFromImage(logo);
     Database db("credentials.db");
      
     inputFieldArray[0] = {
@@ -93,16 +97,32 @@ public:
  }
 
 void on_exit() override{
+  
+  UnloadImage(logo);
+  UnloadTexture(logoTex);
   db.closeDB(); 
   return;
 }
 
 void on_event(){
+  
   if(session->status==LOGGEDIN){
         session->setSessionScene("cgamemode");
         scenemanager->switch_to("cgamemode");
   }
   if(IsKeyPressed(KEY_ENTER)){
+
+  if(checkLoginInfo()){
+    if(db.checkCredentialsRegister(string(username),string(password))){ 
+      db.AddEntry(string(username),string(password)); 
+        std::cout << "Registered user successfully!" << endl; 
+    }
+    }
+  else{
+    std::cout << "Passwords Don't Match!"<<endl; 
+    std::cout << password <<"|" <<  rpassword<<endl; 
+  }
+  
     session->setSessionScene("login");
     scenemanager->switch_to("login");
   }
@@ -146,7 +166,7 @@ void on_event(){
   if(IsKeyPressed(KEY_TAB)){
 
 for(i= 0; i < sizeof(inputFieldArray)-1 ;i++){
-if(inputFieldArray[i].active && i<=3){
+ if(inputFieldArray[i].active){
 
 if((i+1)>2){
     inputFieldArray[i].active=!inputFieldArray[i].active;
@@ -197,6 +217,7 @@ void on_update() override{
 
       ClearBackground(Color{46,26,71});
   
+  DrawTextureEx(logoTex, (Vector2){GetScreenWidth()/2-logoTex.width/2, logoTex.height-80}, 0, 1, WHITE); 
   DrawRectangleRounded(mainRec, 0.3, 1, RAYWHITE); 
   
   DrawText("User Registration Page",

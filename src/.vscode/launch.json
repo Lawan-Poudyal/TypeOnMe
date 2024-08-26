@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "C/C++ Runner: Debug Session",
-      "type": "",
+      "type": "cppdbg",
       "request": "launch",
       "args": [],
       "stopAtEntry": false,

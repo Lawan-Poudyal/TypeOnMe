@@ -55,9 +55,6 @@ public:
      third = LoadImage("assets/third.png");     
      leaderboardPanel = LoadImage("assets/leaderboardPanel.png");     
      populateLeaderboardVector(); 
-
-
-
     texture1 = LoadTextureFromImage(first);
     texture2 = LoadTextureFromImage(second);
     texture3 = LoadTextureFromImage(third);
@@ -66,7 +63,7 @@ public:
     if( (texture1.id)==0 || (texture2.id)==0 || (texture3.id)==0){
      std::cerr << "Error loading textures!" <<endl;
    } 
-    }
+  }
 
     void on_event() override {
   

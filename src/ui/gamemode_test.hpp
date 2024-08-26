@@ -39,7 +39,7 @@ public:
             int wordWidth = MeasureText(word, 30);
             int cursorX = CENTER_X + wordWidth / 2;
             DrawLine(cursorX, CENTER_Y - c_height / 2,
-                     cursorX, CENTER_Y + c_height / 2, RAYWHITE);
+                     cursorX, CENTER_Y + c_height / 2, PINK);
         }
     }
 };
@@ -113,6 +113,9 @@ public:
 
 class CGamemode : public Scene{
   private:
+
+    float current_wpm;
+    float wpm;
     Database db;
     int remaining_time;
     string prev_word;
@@ -167,7 +170,8 @@ class CGamemode : public Scene{
     Button addToLeaderboard;
     Button leaderboard;
   public:
-
+    Font font;
+    
 
    CGamemode(SceneManager* scenemanager,Session* session) :
 
@@ -192,7 +196,8 @@ class CGamemode : public Scene{
      db("credentials.db")
      {
     
-        memcpy(time_options, (char[4][4]){"60s", "45s", "30s", "15s"}, sizeof(time_options));
+        const char time_options_src[4][4] = {"60s", "45s", "30s", "15s"};
+        memcpy(time_options, time_options_src, sizeof(time_options));
         sentence_mode = (false);
         current_sentence = ("");
         prev_word = ("");
@@ -219,6 +224,8 @@ class CGamemode : public Scene{
     } 
 
    void on_entry() override{
+    wpm =0;
+    current_wpm =0;
     typing_started = false;
     game_over = false;
     timer_initialized=false;
@@ -273,7 +280,7 @@ class CGamemode : public Scene{
             if (seconds < 0) seconds = 0;
         }
 
-        DrawText(TextFormat("Time: %i", seconds), init_width-200, 40, 20, WHITE);
+        DrawTextD(TextFormat("Time: %i", seconds), init_width-200, 40, 20, WHITE);
         return seconds;
     }
 
@@ -309,15 +316,15 @@ class CGamemode : public Scene{
         int current_word_font_size = base_font_size + int(10 * animation_progress);
 
         // Draw previous word (left)
-        DrawText(prev_word.c_str(), anim_left_x, y, 30, LIGHTGRAY);
+        DrawTextD(prev_word.c_str(), anim_left_x, y, 30, LIGHTGRAY);
 
         // Draw current word (center)
         int current_word_width = MeasureText(current_word.c_str(), current_word_font_size);
-        DrawText(current_word.c_str(), anim_center_x - current_word_width / 2, y - (current_word_font_size - base_font_size) / 2, current_word_font_size, WHITE);
+        DrawTextD(current_word.c_str(), anim_center_x - current_word_width / 2, y - (current_word_font_size - base_font_size) / 2, current_word_font_size, WHITE);
 
         // Draw next word (right)
         int next_word_width = MeasureText(next_word.c_str(), 30);
-        DrawText(next_word.c_str(), anim_right_x - next_word_width, y, 30, LIGHTGRAY);
+        DrawTextD(next_word.c_str(), anim_right_x - next_word_width, y, 30, LIGHTGRAY);
 
         EndScissorMode();
 
@@ -353,13 +360,13 @@ class CGamemode : public Scene{
             if (MeasureText(test_line.c_str(), font_size) <= max_width - 2 * padding) {
                 line = test_line;
             } else {
-                DrawText(line.c_str(), x, y, font_size, WHITE);
+                DrawTextD(line.c_str(), x, y, font_size, WHITE);
                 y += font_size + line_spacing;
                 line = word;
             }
         }
         if (!line.empty()) {
-            DrawText(line.c_str(), x, y, font_size, WHITE);
+            DrawTextD(line.c_str(), x, y, font_size, WHITE);
         }
 
         EndScissorMode();
@@ -375,7 +382,7 @@ class CGamemode : public Scene{
         for (size_t i = 0; i < word_len; i++) {
             Color color = (i < correct_len && word[i] == correct_word[i]) ? RAYWHITE : RED;
             char temp[2] = {word[i], '\0'};
-            DrawText(temp, cursor_x, y, fontSize, color);
+            DrawTextD(temp, cursor_x, y, fontSize, color);
             cursor_x += MeasureText(temp, fontSize) + 2;
         }
 
@@ -424,8 +431,7 @@ class CGamemode : public Scene{
               on_exit();
         }
         if(game_over && IsButtonClicked(addToLeaderboard.rect)){
-          std::pair <string,int> pairBuf(session->getUsername(),calculate_wpm());
-          std::cout << "USERNAME: " << session->getUsername() << "WPM: "<< calculate_wpm() << endl;
+          std::pair <string,int> pairBuf(session->getUsername(),wpm);
           db.insertLeaderboard(pairBuf);
         }
         
@@ -450,7 +456,7 @@ class CGamemode : public Scene{
         int box_width = 740;
         int box_height = 150;
     
-        DrawText(session->getUsername().c_str(),init_width/2,20, 30, WHITE);
+        DrawTextD(session->getUsername().c_str(),init_width/2,20, 30, WHITE);
 
         if(!game_over){
         // Handle animation
@@ -562,7 +568,7 @@ class CGamemode : public Scene{
                 
                 if (currentLineWidth + charWidth > maxTypingWidth) {
                     // Draw the current line and move to the next
-                    DrawText(currentLine.c_str(), textStartX, currentLineY, fontSize, WHITE);
+                    DrawTextD(currentLine.c_str(), textStartX, currentLineY, fontSize, WHITE);
                     currentLineY += fontSize + 5; // Move to next line
                     currentLine.clear();
                     currentLineWidth = 0;
@@ -573,7 +579,7 @@ class CGamemode : public Scene{
             }
             
             // Draw the last line
-            DrawText(currentLine.c_str(), textStartX, currentLineY, fontSize, WHITE);
+            DrawTextD(currentLine.c_str(), textStartX, currentLineY, fontSize, WHITE);
 
             // Calculate cursor position
             int cursorX = textStartX + MeasureText(currentLine.c_str(), fontSize);
@@ -583,7 +589,7 @@ class CGamemode : public Scene{
             if (drawCursor) {
                 int cursorHeight = fontSize + 10;
                 DrawLine(cursorX, cursorY - cursorHeight / 2, 
-                        cursorX, cursorY + cursorHeight / 2, RAYWHITE);
+                        cursorX, cursorY + cursorHeight / 2, PINK);
             }
         }
     if (!sentence_mode) {
@@ -596,17 +602,17 @@ class CGamemode : public Scene{
         // Draw the cursor
         if (drawCursor) {
             DrawLine(textStartX + wordWidth, CENTER_Y - 25, 
-                     textStartX + wordWidth, CENTER_Y + 25, RAYWHITE);
+                     textStartX + wordWidth, CENTER_Y + 25, PINK);
         
         }
     }
 
         // Draw mode selection buttons
         DrawRectangleRec(button_0.rect, button_0.color);
-        DrawText("Sentence", button_0.rect.x + button_0.rect.width/2 - MeasureText("Sentence", 10) - 10, button_0.rect.y + button_0.rect.height/2 - 20 / 2, 20, WHITE);
+        DrawTextD("Sentence", button_0.rect.x + button_0.rect.width/2 - MeasureText("Sentence", 10) - 10, button_0.rect.y + button_0.rect.height/2 - 20 / 2, 20, WHITE);
   
         DrawRectangleRec(button_1.rect, button_1.color);
-        DrawText("Words", button_1.rect.x + button_1.rect.width/2 - MeasureText("Words", 10) - 10, button_1.rect.y + button_1.rect.height/2 - 20 / 2, 20, WHITE);
+        DrawTextD("Words", button_1.rect.x + button_1.rect.width/2 - MeasureText("Words", 10) - 10, button_1.rect.y + button_1.rect.height/2 - 20 / 2, 20, WHITE);
 
 
         // Draw time buttons
@@ -614,7 +620,7 @@ class CGamemode : public Scene{
             for (int i = 0; i < NUM_TIME_BUTTONS; i++) {
 
                 DrawRectangleRec(time_buttons[i].rect, time_buttons[i].color);
-                DrawText(time_options[i], 
+                DrawTextD(time_options[i], 
                          time_buttons[i].rect.x + 10, 
                          time_buttons[i].rect.y + 10, 
                          20, WHITE);
@@ -622,25 +628,30 @@ class CGamemode : public Scene{
             }
         }
         }
+
      else { 
         // Game over state
       ClearBackground(Color{46,26,71});
-        float wpm = calculate_wpm();
-        float acc = accuracy(typedWords, all_displayed_words);
-        DrawText(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
-        DrawText(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
+      float acc = accuracy(typedWords, all_displayed_words);
+        if(wpm){ 
+          current_wpm = wpm;
+        }
+        else{
+          wpm = calculate_wpm(); 
+        }
+        DrawTextD(TextFormat("Final WPM: %.2f", wpm), init_width / 2 - 100, init_height / 2, 30, RAYWHITE);
+        DrawTextD(TextFormat("Accuracy: %.2f%%", acc), init_width / 2 - 100, init_height / 2 + 50, 30, RAYWHITE);
         DrawRectangleRec(addToLeaderboard.rect,addToLeaderboard.color);
-        DrawText("Add To Leaderboard", addToLeaderboard.rect.x + addToLeaderboard.rect.width/2 - MeasureText("Add To Leaderboard", 10) - 10, addToLeaderboard.rect.y + addToLeaderboard.rect.height/2 - 20 / 2, 20, WHITE);
+        DrawTextD("Add To Leaderboard", addToLeaderboard.rect.x + addToLeaderboard.rect.width/2 - MeasureText("Add To Leaderboard", 10) - 10, addToLeaderboard.rect.y + addToLeaderboard.rect.height/2 - 20 / 2, 20, WHITE);
+     }
+     if(!game_over && !wpm){
+        current_wpm=calculate_wpm();
      }
 
-        float current_wpm = calculate_wpm();
-        DrawText(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE);
-    
 
-
+        DrawTextD(TextFormat("Current WPM: %.2f", current_wpm), 10, init_height - 40, 20, WHITE); 
         DrawRectangleRec(leaderboard.rect,leaderboard.color);
-        DrawText("Leaderboard",GetScreenWidth()-MeasureText("Leaderboard",20)-5,GetScreenHeight()-40,20,WHITE);
-
+        DrawTextD("Leaderboard",GetScreenWidth()-MeasureText("Leaderboard",20)-5,GetScreenHeight()-40,20,WHITE);
         EndDrawing(); 
     }
 
@@ -673,4 +684,8 @@ class CGamemode : public Scene{
         button->color = color;
     }
 
+    void DrawTextD(const char* text,int positionX, int positionY, int fontSize,Color color){
+      Vector2 position = {positionX,positionY};
+      DrawText(text,positionX,positionY,fontSize,color);
+    }
 };

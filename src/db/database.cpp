@@ -185,19 +185,16 @@ const char* sql = "SELECT USERNAME, WPM FROM leaderboard WHERE USERNAME != '';";
 
     if (rc != SQLITE_DONE) {
         std::cerr << "Error retrieving data: " << sqlite3_errmsg(m_db) << std::endl;
-        return leaderboardMap;  // Return whatever data we managed to retrieve
+        return leaderboardMap;
     }
 
-    // Sort the leaderboard by WPM in descending order
     std::sort(leaderboardMap.begin(), leaderboardMap.end(),
               [](const auto& a, const auto& b) { return a.second > b.second; });
 
-    // Print the sorted leaderboard (if needed)
     for (const auto& entry : leaderboardMap) {
         std::cout << entry.first << " " << entry.second << std::endl;
     }
 
-    // Consider moving this to a separate function if it's still needed
     if (!clearOutLeaderboard(leaderboardMap.size())) {
         std::cerr << "Error clearing out data or entries less than 7" << std::endl;
     }
