@@ -8,5 +8,4 @@ float accuracy(vector<string> typedWords,vector<string> totWords){
     }
   }
   return (float)(typedWords.size() - incorWordCount )/ totWords.size() * 100;
-
 }

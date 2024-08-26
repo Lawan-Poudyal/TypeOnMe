@@ -396,14 +396,14 @@ class CGamemode : public Scene{
         int key = GetCharPressed();
 
         if (letter_count < MAX_INPUT_CHAR) {
-            if ((key >= 32 && key <= 125) || key == ' ') {
+            if (((key >= 32 && key <= 125) || key == ' ' ) && key!=KEY_ENTER) {
                 word[letter_count] = (char)key;
                 letter_count++;
                 total_characters_typed++;
-                if (!typing_started) {
-                    typing_started = true;
-                    typing_start_time = GetTime();
-                }
+              if (!typing_started && letter_count > 1) {
+                  typing_started = true;
+                  typing_start_time = GetTime();
+              }
             }
         }
                 if (!sentence_mode && letter_count > 0 && (key == 32 || word[letter_count - 1] == ' ')) {
@@ -434,7 +434,9 @@ class CGamemode : public Scene{
             word[letter_count] = '\0';
         } 
         if(game_over && IsKeyPressed(KEY_ENTER)){
-              on_exit();
+          on_exit();    
+          on_entry();
+        
         }
         if(game_over && IsButtonClicked(addToLeaderboard.rect)){
           std::pair <string,int> pairBuf(session->getUsername(),wpm);
@@ -559,10 +561,6 @@ class CGamemode : public Scene{
             button_1.color = Color{0,0,0,128};
         }
 
-        if (!typing_started && letter_count > 1) {
-            typing_started = true;
-            typing_start_time = GetTime();
-        }
 
 
         if (sentence_mode) {
