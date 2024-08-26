@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>
-#include<memory>
+#include <memory>
 #include "./../scene_manager/scene_manager.hpp"
 #include "../game_logic/accuracy.hpp"
 #include "../globals.hpp"
@@ -193,7 +193,9 @@ class CGamemode : public Scene{
      init_height(760),
      scenemanager(scenemanager),
      session(session),
-     db("credentials.db")
+     db("credentials.db"),
+     current_wpm(0.0f),
+     wpm(0.0f)
      {
     
         const char time_options_src[4][4] = {"60s", "45s", "30s", "15s"};
@@ -221,7 +223,8 @@ class CGamemode : public Scene{
     for (int i = 0; i < 3; ++i) {
         word_queue.push_back(word_generator.getNextWord());
       }
-    } 
+    }
+    
 
    void on_entry() override{
     wpm =0;
@@ -258,8 +261,8 @@ class CGamemode : public Scene{
 
     float calculate_wpm() {
         if (!typing_started) return 0.0f;
-        double end_time = typing_end_time > 0 ? typing_end_time : GetTime();
-        float elapsed_time = (end_time - typing_start_time) / 60.0f; // convert seconds to minutes
+        double current_time = GetTime();
+        float elapsed_time = (current_time - typing_start_time) / 60.0f; // convert seconds to minutes
         if (elapsed_time < 0.0001f) return 0.0f; // Avoid division by zero
         return (total_characters_typed / 5.0f) / elapsed_time; // Assuming 5 characters per word
     }
@@ -393,13 +396,16 @@ class CGamemode : public Scene{
         int key = GetCharPressed();
 
         if (letter_count < MAX_INPUT_CHAR) {
-
             if ((key >= 32 && key <= 125) || key == ' ') {
                 word[letter_count] = (char)key;
                 letter_count++;
                 total_characters_typed++;
-                } 
+                if (!typing_started) {
+                    typing_started = true;
+                    typing_start_time = GetTime();
+                }
             }
+        }
                 if (!sentence_mode && letter_count > 0 && (key == 32 || word[letter_count - 1] == ' ')) {
                     if (word[letter_count - 1] == ' ') {
                         word[letter_count - 1] = '\0';  // Remove the space
@@ -466,6 +472,15 @@ class CGamemode : public Scene{
                 animation_progress = 1.0f;
                 animating = false;
             }
+        }
+        if (typing_started) {
+                current_wpm = calculate_wpm();
+            }
+
+        if (remaining_time <= 0) {
+            game_over = true;
+            typing_end_time = GetTime();
+            wpm = calculate_wpm(); // Calculate final WPM
         }
 
         cursorContent += GetFrameTime();
