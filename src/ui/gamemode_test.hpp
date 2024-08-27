@@ -96,7 +96,7 @@ public:
         unused_words = dictionary;
         random_shuffle(unused_words.begin(), unused_words.end());
     }
-
+//chup sale
     string getNextWord() {
         if(unused_words.empty()){
             resetUnusedWords();
