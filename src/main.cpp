@@ -1,0 +1,155 @@
+#include<raylib.h>
+#include<iostream>
+#include<string>
+#include<vector>
+#include<ctime>
+#include<unistd.h>
+
+
+#define MAX_INPUT_CHAR 500
+
+using namespace std;
+vector<string> RandomWord(vector<string>,int seed);
+
+class Cursor{
+  
+  public:
+    int pos1_x;
+    int pos2_x;
+    int pos1_y;
+    int pos2_y;
+   
+    Cursor(char* name,int init_height_name,int letter_count,bool drawCursor){
+      if(drawCursor && letter_count < MAX_INPUT_CHAR){
+          DrawLine(MeasureText(name,30)+35,init_height_name/2 - 25,MeasureText(name,30)+35,init_height_name/2+25,BLACK);
+      }
+   }
+
+}; 
+
+class WordGenerator{
+
+    public:
+    vector<string> RandomWord(vector<string>dictionary,int seed){
+
+  srand(seed);
+  vector<string> return_list;
+  
+  for(int i=0;i<10;i++){
+    return_list.push_back(dictionary[rand()%10]);
+  }
+  return return_list;   
+  }
+
+};
+
+
+int main(void){  
+  
+  const int init_width  = 1440;
+  const int init_height = 768;
+
+  char name[MAX_INPUT_CHAR + 1];
+  name[MAX_INPUT_CHAR+1] = '\0';
+  int letter_count = 0;
+  float cursorContent = 0.0f;
+  bool drawCursor = true;
+
+  int spaces =0;
+  float wpm;
+  int count_for_closing_window_after_wpm=0;
+
+  InitWindow(init_width,init_height,"TypeOnMe");
+  SetTargetFPS(200);
+  
+  vector<string> dictionary = {
+  "very",
+  "cool",
+  "looking",
+  "guy",
+  "is",
+  "democrat",
+  "nation",
+  "signify",
+  "netlify",
+  "hey",
+  "hello"
+  };
+
+int start_time = GetTime();
+  while(!WindowShouldClose())
+    {
+
+      //if(spaces==1){
+    
+
+      //average nikalna sakxas,sab wpm ko sum garera,store all the wpms in a vector
+      //and push_back to push to the very vector and finally final wpm vanera dekhauna sakiyo,damnn
+        const int end_time = GetTime();
+        wpm = (float)10/(end_time-start_time) * 60 ;    
+        DrawText(to_string(wpm).c_str(),30,init_height/2 + 100,30,BLACK);  
+        //   count_for_closing_window_after_wpm++;
+      
+      //}
+      
+      if((IsKeyPressed(KEY_BACKSPACE) && letter_count > 0)){
+        if(name[letter_count] == ' '){
+          spaces--;
+        }
+        letter_count--;
+        name[letter_count] = '\0';
+      }
+
+      else if(letter_count < MAX_INPUT_CHAR){
+        int key = GetCharPressed();
+        
+      if((key >= 32 && key<= 125) || key== ' ' ){
+  name[letter_count] = (char) key;
+        if(name[letter_count] == ' '){
+          spaces++;
+        }
+          std::cout << name <<std::endl;
+          letter_count++;
+      }
+
+      }
+
+        cursorContent += GetFrameTime();
+        if(cursorContent>=0.5f){
+          cursorContent=0.0f;
+          drawCursor = !drawCursor;
+        }
+         
+
+        //To-be replenished with OOP
+
+      BeginDrawing();
+      
+      ClearBackground(RAYWHITE);
+      DrawText(name,30,init_height/2-10,30,BLACK);
+ 
+      Cursor cursor_1(name,init_height,letter_count,drawCursor); //used OOP to implement a blinking cursor
+  
+      WordGenerator random_word_gen;
+
+      int word_width=0;
+      vector<string> random_words = random_word_gen.RandomWord(dictionary,2);
+      for(string random_word : random_words ){ 
+        DrawText(random_word.c_str(),2.5*word_width+50,30,30,BLACK);
+        word_width+=MeasureText(random_word.c_str(),20);
+      
+      }  
+      
+      EndDrawing();
+
+     if(count_for_closing_window_after_wpm){
+       sleep(2); 
+       break;
+     } 
+     //To-be worked on with OOP
+    }  
+  
+  CloseWindow();
+  return 0;
+}
+
